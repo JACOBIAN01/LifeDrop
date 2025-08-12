@@ -1,20 +1,42 @@
-import React, { useState } from "react";
+import { useState , useEffect } from "react";
 import Navbar from "../components/Navbar";
-// Sign In UI
+import { register } from "../services/AuthService";
+import { login } from "../services/AuthService";
+import { auth } from "../services/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+
+
+// Sign In
 function SignInForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    try {
+      await login(email, password);
+      alert("Logged in Successfully");
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   return (
     <form className="space-y-4">
       <input
+        onChange={(e) => setEmail(e.target.value)}
         type="email"
         placeholder="Email"
         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300"
       />
       <input
+        onChange={(e) => setPassword(e.target.value)}
         type="password"
         placeholder="Password"
         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300"
       />
       <button
+        onClick={handleSignIn}
         type="submit"
         className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition"
       >
@@ -24,8 +46,21 @@ function SignInForm() {
   );
 }
 
-//Sign Up UI
+//Sign Up
 function SignUpForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    try {
+      await register(email, password);
+      alert("User Registered Successfully!");
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   return (
     <form className="space-y-4">
       <input
@@ -34,21 +69,19 @@ function SignUpForm() {
         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300"
       />
       <input
+        onChange={(e) => setEmail(e.target.value)}
         type="email"
         placeholder="Email"
         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300"
       />
       <input
+        onChange={(e) => setPassword(e.target.value)}
         type="password"
         placeholder="Password"
         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300"
       />
-      <input
-        type="password"
-        placeholder="Confirm Password"
-        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300"
-      />
       <button
+        onClick={handleSignUp}
         type="submit"
         className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition"
       >
@@ -58,13 +91,25 @@ function SignUpForm() {
   );
 }
 
-//Main Auth Component (Handles Logic)
+
+
+//Main Auth Component
 export default function Auth() {
-  const [isSignIn, setIsSignIn] = useState(true);
+
+  const [user , setUser] = useState(null);
+  const [isSignIn, setIsSignIn] = useState(false);
+
+  useEffect(()=>{
+    const unsubscribe = onAuthStateChanged(auth,(currentUser)=>{
+      setUser(currentUser);
+    });
+    return ()=>unsubscribe();
+  })
+
 
   return (
     <>
-    <Navbar/>
+      <Navbar user={user}/>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100 p-4">
         <div className="bg-white shadow-lg rounded-xl w-full max-w-md p-6">
           <h2 className="text-2xl font-bold text-center text-red-600 mb-4">
@@ -88,3 +133,4 @@ export default function Auth() {
     </>
   );
 }
+
