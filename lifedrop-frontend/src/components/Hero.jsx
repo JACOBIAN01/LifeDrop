@@ -1,8 +1,9 @@
-import React,{useNavigate} from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const HeroSection = () => {
 
-  const naviagte = useNavigate();
+export default function Hero() {
+  const navigate = useNavigate();
 
   return (
     <section className="relative w-full h-screen overflow-hidden">
@@ -22,21 +23,21 @@ const HeroSection = () => {
       {/* Content */}
       <div className="relative z-10 flex flex-col justify-center items-center text-center h-full px-4">
         <h1 className="text-white text-4xl md:text-6xl font-bold drop-shadow-lg">
-          Donate Blood , Save Lives ❤️
+          Donate Blood, Save Lives ❤️
         </h1>
         <p className="text-white text-lg md:text-2xl mt-4 drop-shadow-md">
           LifeDrop connects donors and patients in real-time for urgent needs.
         </p>
         <div className="flex justify-center items-center gap-5">
           <button
-            onClick={() => naviagte("/donor")}
-            className="mt-6 bg-red-500 hover:bg-red-600 text-white border-1 border-white px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+            onClick={() => navigate("/donor")}
+            className="mt-6 bg-red-500 hover:bg-red-600 text-white border border-white px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
           >
             Be a Hero
           </button>
           <button
-            onClick={() => naviagte("/request")}
-            className="mt-6 bg-white hover:bg-red-50 text-red-600 border-1 border-red-500 px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+            onClick={() => navigate("/request")}
+            className="mt-6 bg-white hover:bg-red-50 text-red-600 border border-red-500 px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
           >
             Ask for Help
           </button>
@@ -44,6 +45,4 @@ const HeroSection = () => {
       </div>
     </section>
   );
-};
-
-export default HeroSection;
+}
