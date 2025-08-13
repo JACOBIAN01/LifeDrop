@@ -94,6 +94,7 @@ export default function BecomeDonorPage({ user }) {
             />
 
             <input
+            onChange={(e)=>setEmail(e.target.value)}
               type="email"
               placeholder="Email"
               value={email}
