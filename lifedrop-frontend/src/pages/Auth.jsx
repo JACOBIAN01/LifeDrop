@@ -1,23 +1,31 @@
-import { useState } from "react";
+import { useState,useEffect} from "react";
 import Navbar from "../components/Navbar";
 import { register } from "../services/AuthService";
 import { login } from "../services/AuthService";
+import MessageBox from "../components/Alert";
 
 
 // Sign In
 function SignInForm() {
+  
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       await login(email, password);
-      alert("Logged in Successfully");
+      MessageBox("Logged in Successfully", "success");
     } catch (err) {
-      alert(err.message);
+      MessageBox(err.message, "error");
+    } finally {
+      setIsLoading(false);
     }
   };
+
 
   return (
     <form className="space-y-4">
@@ -34,36 +42,45 @@ function SignInForm() {
         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300"
       />
       <button
+        disabled={isLoading}
         onClick={handleSignIn}
         type="submit"
         className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition"
       >
-        Sign In
+        {isLoading ? "Signing In..." : "Sign In"}
       </button>
     </form>
   );
 }
 
+
 //Sign Up
 function SignUpForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name , setName] = useState("");
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const [name, setName] = useState("");
+const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
-    try {
-      await register(name,email, password);
-      alert("User Registered Successfully!");
-    } catch (err) {
-      alert(err.message);
-    }
-  };
+
+const handleSignUp = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  try {
+    await register(name, email, password);
+     MessageBox("User Registered Successfully!", "success");
+  } catch (err) {
+     MessageBox(err.message, "error");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
 
   return (
     <form className="space-y-4">
       <input
-        onChange={(e)=>setName(e.target.value)}
+        onChange={(e) => setName(e.target.value)}
         type="text"
         placeholder="Full Name"
         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300"
@@ -81,11 +98,12 @@ function SignUpForm() {
         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300"
       />
       <button
+      disabled={isLoading}
         onClick={handleSignUp}
         type="submit"
         className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition"
       >
-        Sign Up
+        {isLoading ? "Signing Up..." : "Sign Up"}
       </button>
     </form>
   );
@@ -94,27 +112,51 @@ function SignUpForm() {
 
 
 //Main Auth Component
-export default function Auth() {
 
+export default function Auth({ status}) {
+ 
+  const [isSignIn, setIsSignIn] = useState(status);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   
-  const [isSignIn, setIsSignIn] = useState(false);
+  // Use useEffect to handle prop changes if needed, though this is not required
+  // for the initial render.
+  useEffect(() => {
+    setIsSignIn(status === "SignIN");
+  }, [status]);
+
+  const handleMessage = (msg, type) => {
+    setMessage(msg);
+    setMessageType(type);
+  };
   
+  const toggleForm = () => {
+    setIsSignIn(!isSignIn);
+    setMessage(""); // Clear message when toggling forms
+  };
+
   return (
     <>
-      <Navbar/>
+      <Navbar />
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100 p-4">
         <div className="bg-white shadow-lg rounded-xl w-full max-w-md p-6">
           <h2 className="text-2xl font-bold text-center text-red-600 mb-4">
             {isSignIn ? "Sign In to LifeDrop" : "Create Your LifeDrop Account"}
           </h2>
+          
+          <MessageBox
+            message={message}
+            type={messageType}
+            onClose={() => setMessage("")}
+          />
 
-          {isSignIn ? <SignInForm /> : <SignUpForm />}
+          {isSignIn ? <SignInForm onMessage={handleMessage} /> : <SignUpForm onMessage={handleMessage} />}
 
           {/* Toggle Link */}
           <p className="mt-4 text-center text-gray-600">
             {isSignIn ? "Don't have an account?" : "Already have an account?"}{" "}
             <button
-              onClick={() => setIsSignIn(!isSignIn)}
+              onClick={toggleForm}
               className="text-red-500 font-semibold hover:underline"
             >
               {isSignIn ? "Sign Up" : "Sign In"}
@@ -125,4 +167,3 @@ export default function Auth() {
     </>
   );
 }
-

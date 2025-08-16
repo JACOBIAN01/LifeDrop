@@ -7,13 +7,14 @@ import BloodRequestPage from "./pages/BloodRequestPage";
 
 export default function App() {
   return (
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/donor" element={<BecomeDonorPage />} />
-          <Route path="/request" element={<BloodRequestPage />} />
-        </Routes>
-      </Router>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/authIN" element={<Auth status="SignIN" />} />
+        <Route path="/authUP" element={<Auth status="SignUP" />} />
+        <Route path="/donor" element={<BecomeDonorPage />} />
+        <Route path="/request" element={<BloodRequestPage />} />
+      </Routes>
+    </Router>
   );
 }

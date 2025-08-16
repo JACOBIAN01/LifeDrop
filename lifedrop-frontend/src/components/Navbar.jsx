@@ -6,13 +6,13 @@ const UserSignOut = () => {
   return (
     <div className="flex space-x-4">
       <button
-        onClick={() => navigate("/auth")}
+        onClick={() => navigate("/authIN")}
         className="px-4 py-2 rounded-lg bg-white text-rose-500 font-semibold hover:bg-rose-50 transition"
       >
         Sign In
       </button>
       <button
-        onClick={() => navigate("/auth")}
+        onClick={() => navigate("/authUP")}
         className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition"
       >
         Sign Up
@@ -40,6 +40,7 @@ const UserSignIn = ({UserName}) => {
     </div>
   );
 };
+
 
 export default function Navbar() {
   const user = useCurrentUser();
