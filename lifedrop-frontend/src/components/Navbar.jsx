@@ -43,6 +43,7 @@ const UserSignIn = ({UserName}) => {
 
 
 export default function Navbar() {
+  
   const user = useCurrentUser();
 
   return (
