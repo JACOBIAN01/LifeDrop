@@ -7,8 +7,33 @@ import {
   serverTimestamp,
   Timestamp,
 } from "firebase/firestore";
+import { useCurrentUser } from "../services/AuthService";
 
-export default function BloodRequestPage({ user }) {
+
+function Ask_to_Sign_In() {
+  return (
+    <>
+    <Navbar/>
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-red-50 flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-white shadow-lg rounded-2xl p-8 text-center">
+          <h1 className="text-3xl font-bold text-rose-500 mb-4">
+            Please Sign in to Continue
+          </h1>
+          <p className="text-gray-600">
+            You need to be signed in to request blood or access this page.
+          </p>
+        </div>
+      </div>
+    </>
+  );
+}
+
+
+
+export default function BloodRequestPage() {
+
+  const user = useCurrentUser();
+
   const [name, setName] = useState(user?.displayName || "");
   const [email, setEmail] = useState(user?.email || "");
   const [bloodGroupNeeded, setBloodGroupNeeded] = useState("");
@@ -21,6 +46,11 @@ export default function BloodRequestPage({ user }) {
   const [patientCondition, setPatientCondition] = useState("Normal");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [status, setStatus] = useState(""); // or notes, your choice
+
+  //
+  if (user === null) {
+      return <Ask_to_Sign_In />;
+    }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,7 +92,8 @@ export default function BloodRequestPage({ user }) {
       setStatus("");
     } catch (err) {
       console.error("Error adding document: ", err);
-      alert("Failed to submit request. Please try again.");
+      // alert("Failed to submit request. Please try again.", err);
+      alert(err);
     }
   };
 
@@ -86,7 +117,7 @@ export default function BloodRequestPage({ user }) {
 
             <input
               type="email"
-              onChange={(e)=>setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Email"
               value={email}
               readOnly
@@ -207,3 +238,5 @@ export default function BloodRequestPage({ user }) {
     </>
   );
 }
+
+

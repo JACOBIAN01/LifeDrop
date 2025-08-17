@@ -76,7 +76,6 @@ const handleSignUp = async (e) => {
 };
 
 
-
   return (
     <form className="space-y-4">
       <input

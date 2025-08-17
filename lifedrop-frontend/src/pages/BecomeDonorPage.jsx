@@ -7,8 +7,14 @@ import {
   serverTimestamp,
   Timestamp,
 } from "firebase/firestore";
+import Ask_to_Sign_In from "./BloodRequestPage";
+import { useCurrentUser } from "../services/AuthService";
 
-export default function BecomeDonorPage({ user }) {
+
+export default function BecomeDonorPage() {
+
+  const user = useCurrentUser();
+
   const [name, setName] = useState(user?.displayName || "");
   const [email, setEmail] = useState(user?.email || "");
   const [phone, setPhone] = useState("");
@@ -24,6 +30,13 @@ export default function BecomeDonorPage({ user }) {
   const [donationCount, setDonationCount] = useState(0);
   const [available, setAvailable] = useState(true);
 
+  if(user===null){
+    return(
+      <Ask_to_Sign_In/>
+    )
+  }
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -34,6 +47,7 @@ export default function BecomeDonorPage({ user }) {
       ? Timestamp.fromDate(new Date(lastDonation))
       : null;
 
+      
     const donorData = {
       name,
       email,

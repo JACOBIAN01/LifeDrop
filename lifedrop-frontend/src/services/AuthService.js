@@ -11,7 +11,6 @@ import { auth, db } from "./firebase";
 
 
 //Get Current User
-
 export const useCurrentUser = () => {
   const [user, setUser] = useState(null);
 
