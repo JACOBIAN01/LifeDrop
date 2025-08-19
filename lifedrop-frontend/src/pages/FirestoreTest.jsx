@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { db } from "../services/Firebase";
+import { useState } from "react";
+import { db } from "../services/firebase";
 import { collection, addDoc } from "firebase/firestore";
 import Navbar from "../components/Navbar";
 import { useCurrentUser } from "../services/AuthService";
-import { SourceTextModule } from "vm";
 
 export default function Test() {
   const [name, setName] = useState("");
@@ -28,7 +27,7 @@ export default function Test() {
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
         <div className="w-full max-w-sm bg-white shadow-md rounded-lg p-6">
           <h2 className="text-2xl font-semibold mb-4 text-center">
-          Hello  {user&&user.displayName || "User"}
+            Hello {user ? user.displayName || "User" : "User"}
           </h2>
           <input
             type="text"
