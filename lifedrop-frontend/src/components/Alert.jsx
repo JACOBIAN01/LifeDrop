@@ -1,3 +1,6 @@
+
+
+
 const MessageBox = ({ message, type, onClose }) => {
   if (!message) return null;
 

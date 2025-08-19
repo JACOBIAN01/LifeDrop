@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useCurrentUser, logout } from "../services/AuthService";
 
+
+
 const UserSignOut = () => {
   const navigate = useNavigate();
   return (
@@ -60,7 +62,6 @@ export default function Navbar() {
               <Link to="/">LifeDrop</Link>
             </span>
           </div>
-
           <div>{user ? <UserSignIn UserName={user.displayName||"User"}/> : <UserSignOut />}</div>
         </div>
       </div>
