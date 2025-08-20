@@ -18,16 +18,12 @@ function SignInForm() {
     setIsLoading(true);
     try {
       await login(email, password);
-      MessageBox("Logged in Successfully", "success");
     } catch (err) {
-      MessageBox(err.message, "error");
+     alert(err);
     } finally {
       setIsLoading(false);
     }
   };
-
-  
-
 
   return (
     <form className="space-y-4">
@@ -69,9 +65,9 @@ const handleSignUp = async (e) => {
   setIsLoading(true);
   try {
     await register(name, email, password);
-     MessageBox("User Registered Successfully!", "success");
+     alert("User Registered Successfully!")
   } catch (err) {
-     MessageBox(err.message, "error");
+    alert(err);
   } finally {
     setIsLoading(false);
   }

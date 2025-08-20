@@ -1,19 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { db } from "../services/firebase";
 import {
-  collection,
-  addDoc,
+  doc,
+  setDoc,
   serverTimestamp,
   Timestamp,
+  getDoc,
 } from "firebase/firestore";
 import Ask_to_Sign_In from "./BloodRequestPage";
 import { useCurrentUser } from "../services/AuthService";
-
+import Dashboard from "./Dashboard";
 
 export default function BecomeDonorPage() {
-
   const user = useCurrentUser();
+
+  const [loading, setLoading] = useState(true);
+  const [isDonor, setIsDonor] = useState(false);
 
   const [name, setName] = useState(user?.displayName || "");
   const [email, setEmail] = useState(user?.email || "");
@@ -30,12 +33,37 @@ export default function BecomeDonorPage() {
   const [donationCount, setDonationCount] = useState(0);
   const [available, setAvailable] = useState(true);
 
-  if(user===null){
-    return(
-      <Ask_to_Sign_In/>
-    )
+  //Check if already a donor
+  useEffect(() => {
+    const checkDonor = async () => {
+      if (!user) return;
+      try {
+        const donorRef = doc(db, "donors", user.uid);
+        const donorSnap = await getDoc(donorRef);
+        if (donorSnap.exists()) {
+          setIsDonor(true);
+        }
+      } catch (err) {
+        alert(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkDonor();
+  }, [user]);
+
+  if (isDonor) {
+    return (
+      <>
+        <Dashboard user={user}/>
+      </>
+    );
   }
 
+  if (user === null) {
+    return <Ask_to_Sign_In />;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,7 +75,6 @@ export default function BecomeDonorPage() {
       ? Timestamp.fromDate(new Date(lastDonation))
       : null;
 
-      
     const donorData = {
       name,
       email,
@@ -68,7 +95,8 @@ export default function BecomeDonorPage() {
     };
 
     try {
-      await addDoc(collection(db, "donors"), donorData);
+      await setDoc(doc(db, "donors", user.uid), donorData, { merge: true });
+      setIsDonor(true);
       alert("Thank you for becoming a donor! Your information has been saved.");
       // Reset some fields except name and email
       setPhone("");
@@ -108,7 +136,7 @@ export default function BecomeDonorPage() {
             />
 
             <input
-            onChange={(e)=>setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               type="email"
               placeholder="Email"
               value={email}

@@ -3,7 +3,8 @@ import { useCurrentUser, logout } from "../services/AuthService";
 import MessageBox from "./Alert";
 import { useState } from "react";
 
-const UserSignOut = ({ onMessage }) => {
+
+const UserSignOut = () => {
   const navigate = useNavigate();
 
   return (
@@ -11,7 +12,6 @@ const UserSignOut = ({ onMessage }) => {
       <button
         onClick={() => {
           navigate("/authIN");
-          onMessage("Login Successful", "success");
         }}
         className="px-4 py-2 rounded-lg bg-white text-rose-500 font-semibold hover:bg-rose-50 transition"
       >
@@ -28,15 +28,14 @@ const UserSignOut = ({ onMessage }) => {
 };
 
 
-const UserSignIn = ({ UserName, onMessage }) => {
+const UserSignIn = ({ UserName}) => {
   const handleLogout = async () => {
     await logout();
-    onMessage("Logged out successfully", "success");
   };
 
   return (
     <div className="flex space-x-4 items-center">
-      <p className="text-gray-700 font-medium">Welcome {UserName}</p>
+      <p className="text-gray-700 font-medium">Hello {UserName}</p>
       <button
         onClick={handleLogout}
         className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition"
@@ -48,34 +47,37 @@ const UserSignIn = ({ UserName, onMessage }) => {
 };
 
 
-
 export default function Navbar() {
+
   const user = useCurrentUser();
 
-
   return (
-    <nav className="bg-gradient-to-r from-rose-200 via-red-200 to-rose-300 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <img
-              className="h-15 object-contain mr-3 rounded-lg"
-              src="/Logo_LifeDrop.png"
-              alt="LifeDrop Logo"
-            />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-red-500 to-red-600 font-extrabold text-3xl tracking-wide">
-              <Link to="/">LifeDrop</Link>
-            </span>
-          </div>
-          <div>
-            {user ? (
-              <UserSignIn UserName={user.displayName || "User"} />
-            ) : (
-              <UserSignOut />
-            )}
+    <>
+      <nav className="bg-gradient-to-r from-rose-200 via-red-200 to-rose-300 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <img
+                className="h-15 object-contain mr-3 rounded-lg"
+                src="/Logo_LifeDrop.png"
+                alt="LifeDrop Logo"
+              />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-red-500 to-red-600 font-extrabold text-3xl tracking-wide">
+                <Link to="/">LifeDrop</Link>
+              </span>
+            </div>
+            <div>
+              {user ? (
+                <UserSignIn
+                  UserName={user.displayName || "User"}
+                />
+              ) : (
+                <UserSignOut/>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 }
