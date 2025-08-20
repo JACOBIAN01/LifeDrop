@@ -1,14 +1,12 @@
-import { useState,useEffect} from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import { register } from "../services/AuthService";
+import { register, useCurrentUser } from "../services/AuthService";
 import { login } from "../services/AuthService";
 import MessageBox from "../components/Alert";
-
+import Dashboard from "./Dashboard";
 
 // Sign In
 function SignInForm() {
-  
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -19,7 +17,7 @@ function SignInForm() {
     try {
       await login(email, password);
     } catch (err) {
-     alert(err);
+      alert(err);
     } finally {
       setIsLoading(false);
     }
@@ -51,28 +49,25 @@ function SignInForm() {
   );
 }
 
-
 //Sign Up
 function SignUpForm() {
-const [email, setEmail] = useState("");
-const [password, setPassword] = useState("");
-const [name, setName] = useState("");
-const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-
-const handleSignUp = async (e) => {
-  e.preventDefault();
-  setIsLoading(true);
-  try {
-    await register(name, email, password);
-     alert("User Registered Successfully!")
-  } catch (err) {
-    alert(err);
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      await register(name, email, password);
+      alert("User Registered Successfully!");
+    } catch (err) {
+      alert(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <form className="space-y-4">
@@ -95,7 +90,7 @@ const handleSignUp = async (e) => {
         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300"
       />
       <button
-      disabled={isLoading}
+        disabled={isLoading}
         onClick={handleSignUp}
         type="submit"
         className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition"
@@ -106,16 +101,14 @@ const handleSignUp = async (e) => {
   );
 }
 
-
-
 //Main Auth Component
 
-export default function Auth({ status}) {
- 
+export default function Auth({ status }) {
   const [isSignIn, setIsSignIn] = useState(status);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
-  
+
+
   // Use useEffect to handle prop changes if needed, though this is not required
   // for the initial render.
   useEffect(() => {
@@ -126,11 +119,17 @@ export default function Auth({ status}) {
     setMessage(msg);
     setMessageType(type);
   };
-  
+
   const toggleForm = () => {
     setIsSignIn(!isSignIn);
     setMessage(""); // Clear message when toggling forms
   };
+
+  const user = useCurrentUser();
+  if (user) {
+    return (<Dashboard user={user}/>);
+  }
+
 
   return (
     <>
@@ -140,14 +139,18 @@ export default function Auth({ status}) {
           <h2 className="text-2xl font-bold text-center text-red-600 mb-4">
             {isSignIn ? "Sign In to LifeDrop" : "Create Your LifeDrop Account"}
           </h2>
-          
+
           <MessageBox
             message={message}
             type={messageType}
             onClose={() => setMessage("")}
           />
 
-          {isSignIn ? <SignInForm onMessage={handleMessage} /> : <SignUpForm onMessage={handleMessage} />}
+          {isSignIn ? (
+            <SignInForm onMessage={handleMessage} />
+          ) : (
+            <SignUpForm onMessage={handleMessage} />
+          )}
 
           {/* Toggle Link */}
           <p className="mt-4 text-center text-gray-600">

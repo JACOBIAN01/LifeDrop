@@ -1,8 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useCurrentUser, logout } from "../services/AuthService";
-import MessageBox from "./Alert";
-import { useState } from "react";
-
 
 const UserSignOut = () => {
   const navigate = useNavigate();
@@ -29,9 +26,17 @@ const UserSignOut = () => {
 
 
 const UserSignIn = ({ UserName}) => {
+
+  const navigate = useNavigate();
+
+
   const handleLogout = async () => {
     await logout();
   };
+
+  const handleDashboard = ()=>{
+    navigate("/dashboard");
+  }
 
   return (
     <div className="flex space-x-4 items-center">
@@ -41,6 +46,12 @@ const UserSignIn = ({ UserName}) => {
         className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition"
       >
         Log Out
+      </button>
+      <button
+        onClick={handleDashboard}
+        className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition"
+      >
+        Dashboard
       </button>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { db } from "../services/firebase";
 import {
@@ -10,28 +10,21 @@ import {
 } from "firebase/firestore";
 import Ask_to_Sign_In from "./BloodRequestPage";
 import { useCurrentUser } from "../services/AuthService";
-import Dashboard from "./Dashboard";
+import { useNavigate } from "react-router-dom";
+
 
 export default function BecomeDonorPage() {
   const user = useCurrentUser();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [isDonor, setIsDonor] = useState(false);
 
-  const [name, setName] = useState(user?.displayName || "");
-  const [email, setEmail] = useState(user?.email || "");
-  const [phone, setPhone] = useState("");
-  const [gender, setGender] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [bloodType, setBloodType] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [country, setCountry] = useState("");
-  const [pincode, setPincode] = useState("");
-  const [lastDonation, setLastDonation] = useState("");
-  const [donationCount, setDonationCount] = useState(0);
-  const [available, setAvailable] = useState(true);
+  useEffect(() => {
+      if (isDonor && !loading) {
+        navigate("/dashboard");
+      }
+    }, [isDonor, loading, navigate]);
 
   //Check if already a donor
   useEffect(() => {
@@ -49,21 +42,40 @@ export default function BecomeDonorPage() {
         setLoading(false);
       }
     };
-
     checkDonor();
   }, [user]);
 
-  if (isDonor) {
-    return (
-      <>
-        <Dashboard user={user}/>
-      </>
-    );
+  
+  if (user === null) {
+      return <Ask_to_Sign_In />;
   }
 
-  if (user === null) {
-    return <Ask_to_Sign_In />;
+  if(!isDonor && user!=null){
+    return(
+      <>
+        <DonorForm user={user}/>
+      </>
+    )
   }
+}
+
+//Donor Form If not donor
+
+const DonorForm = ({ user }) => {
+  const [name, setName] = useState(user?.displayName || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [phone, setPhone] = useState("");
+  const [gender, setGender] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [bloodType, setBloodType] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [country, setCountry] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [lastDonation, setLastDonation] = useState("");
+  const [donationCount, setDonationCount] = useState(0);
+  const [available, setAvailable] = useState(true);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,7 +108,6 @@ export default function BecomeDonorPage() {
 
     try {
       await setDoc(doc(db, "donors", user.uid), donorData, { merge: true });
-      setIsDonor(true);
       alert("Thank you for becoming a donor! Your information has been saved.");
       // Reset some fields except name and email
       setPhone("");
@@ -279,4 +290,5 @@ export default function BecomeDonorPage() {
       </div>
     </>
   );
-}
+};
+

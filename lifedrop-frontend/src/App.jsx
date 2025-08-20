@@ -4,6 +4,7 @@ import Auth from "./pages/Auth";
 import BecomeDonorPage from "./pages/BecomeDonorPage";
 import RequestUserCheck from "./pages/BloodRequestPage";
 import Test from "./pages/FirestoreTest";
+import Dashboard from "./pages/Dashboard";
 
 
 export default function App() {
@@ -15,7 +16,8 @@ export default function App() {
         <Route path="/authUP" element={<Auth status="SignUP" />} />
         <Route path="/donor" element={<BecomeDonorPage />} />
         <Route path="/request" element={<RequestUserCheck />} />
-        <Route path="/test" element={<Test/>} />
+        <Route path="/dashboard" element={<Dashboard/>} />
+        <Route path="/test" element={<Test />} />
       </Routes>
     </Router>
   );
