@@ -23,6 +23,7 @@ export const useCurrentUser = () => {
   return user;
 };
 
+
 //Sign Up
 export const register = async (name, email, password) => {
   try {
