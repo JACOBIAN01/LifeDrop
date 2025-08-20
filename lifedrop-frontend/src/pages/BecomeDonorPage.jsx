@@ -13,12 +13,14 @@ import { useCurrentUser } from "../services/AuthService";
 import { useNavigate } from "react-router-dom";
 
 
+
 export default function BecomeDonorPage() {
   const user = useCurrentUser();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [isDonor, setIsDonor] = useState(false);
+
 
   useEffect(() => {
       if (isDonor && !loading) {
@@ -45,7 +47,6 @@ export default function BecomeDonorPage() {
     checkDonor();
   }, [user]);
 
-  
   if (user === null) {
       return <Ask_to_Sign_In />;
   }
