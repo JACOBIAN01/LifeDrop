@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { db } from "../services/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import Navbar from "../components/Navbar";
 
 export default function Dashboard({ user }) {
   const [donorData, setDonorData] = useState(null);
@@ -28,13 +29,14 @@ export default function Dashboard({ user }) {
 
   return (
     <div>
+    <Navbar/>
       <h1>Welcome to the Dashboard {user.displayName || "User"}</h1>
 
       {donorData ? (
         <div className="mt-4 p-4 border rounded bg-gray-50">
           <h2 className="text-xl font-semibold">Your Donor Info</h2>
           <p>
-            <strong>Blood Group:</strong> {donorData.bloodGroup}
+            <strong>Blood Group:</strong> {donorData.bloodType}
           </p>
           <p>
             <strong>City:</strong> {donorData.city}
