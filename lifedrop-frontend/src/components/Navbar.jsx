@@ -1,14 +1,18 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useCurrentUser, logout } from "../services/AuthService";
+import MessageBox from "./Alert";
+import { useState } from "react";
 
-
-
-const UserSignOut = () => {
+const UserSignOut = ({ onMessage }) => {
   const navigate = useNavigate();
+
   return (
     <div className="flex space-x-4">
       <button
-        onClick={() => navigate("/authIN")}
+        onClick={() => {
+          navigate("/authIN");
+          onMessage("Login Successful", "success");
+        }}
         className="px-4 py-2 rounded-lg bg-white text-rose-500 font-semibold hover:bg-rose-50 transition"
       >
         Sign In
@@ -24,10 +28,10 @@ const UserSignOut = () => {
 };
 
 
-const UserSignIn = ({UserName}) => {
+const UserSignIn = ({ UserName, onMessage }) => {
   const handleLogout = async () => {
     await logout();
-    alert("Logged out!");
+    onMessage("Logged out successfully", "success");
   };
 
   return (
@@ -44,9 +48,10 @@ const UserSignIn = ({UserName}) => {
 };
 
 
+
 export default function Navbar() {
-  
   const user = useCurrentUser();
+
 
   return (
     <nav className="bg-gradient-to-r from-rose-200 via-red-200 to-rose-300 shadow-sm">
@@ -62,7 +67,13 @@ export default function Navbar() {
               <Link to="/">LifeDrop</Link>
             </span>
           </div>
-          <div>{user ? <UserSignIn UserName={user.displayName||"User"}/> : <UserSignOut />}</div>
+          <div>
+            {user ? (
+              <UserSignIn UserName={user.displayName || "User"} />
+            ) : (
+              <UserSignOut />
+            )}
+          </div>
         </div>
       </div>
     </nav>
