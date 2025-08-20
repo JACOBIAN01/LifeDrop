@@ -5,9 +5,7 @@ import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { useCurrentUser } from "../services/AuthService";
 
-
 export default function Dashboard() {
-
   const user = useCurrentUser();
   const [donorData, setDonorData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -78,6 +76,13 @@ export default function Dashboard() {
               className="mt-6 bg-white hover:bg-red-50 text-red-600 border border-red-500 px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
             >
               Ask for Help
+            </button>
+ 
+            <button
+              onClick={() => navigate("/")}
+              className="mt-6 ml-6 bg-white hover:bg-red-50 text-red-600 border border-red-500 px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+            >
+              Home
             </button>
           </div>
         ) : (

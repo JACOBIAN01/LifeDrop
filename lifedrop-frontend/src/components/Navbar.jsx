@@ -32,6 +32,7 @@ const UserSignIn = ({ UserName}) => {
 
   const handleLogout = async () => {
     await logout();
+    navigate("/")
   };
 
   const handleDashboard = ()=>{
