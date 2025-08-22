@@ -9,6 +9,7 @@ import {
 import { setDoc, doc } from "firebase/firestore";
 import { auth, db } from "./firebase";
 
+
 //Get Current User
 export const useCurrentUser = () => {
   const [user, setUser] = useState(null);
@@ -51,6 +52,7 @@ export const register = async (name, email, password) => {
     throw error;
   }
 };
+
 
 //LogIN
 export const login = async (email, password) => {

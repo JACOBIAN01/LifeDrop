@@ -4,6 +4,7 @@ import { register, useCurrentUser } from "../services/AuthService";
 import { login } from "../services/AuthService";
 import MessageBox from "../components/Alert";
 import Dashboard from "./Dashboard";
+import { Navigate, useNavigate } from "react-router-dom";
 
 // Sign In
 function SignInForm() {
@@ -51,10 +52,19 @@ function SignInForm() {
 
 //Sign Up
 function SignUpForm() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const user = useCurrentUser();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
+
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -125,10 +135,6 @@ export default function Auth({ status }) {
     setMessage(""); // Clear message when toggling forms
   };
 
-  const user = useCurrentUser();
-  if (user) {
-    return (<Dashboard user={user}/>);
-  }
 
 
   return (
