@@ -13,39 +13,66 @@ import { useCurrentUser } from "../services/AuthService";
 import { useNavigate } from "react-router-dom";
 
 
+export function UseIsDonor(){
+  const user = useCurrentUser();
+  const [isDonor ,SetDonor] = useState(false);
+
+  useEffect(()=>{
+    const checkDonor = async () =>{
+      if(!user) return;
+      try{
+       const donorRef = doc(db, "donors", user.uid);
+          const donorSnap = await getDoc(donorRef);
+          if (donorSnap.exists()) {
+            SetDonor(true);
+          }
+      }catch(err){
+        alert(err);
+      }
+    }
+      checkDonor();
+  },[user])
+
+  return isDonor;
+}
+
+
+export function Donor(){
+  const user = useCurrentUser();
+  const [DonorData , setDonorData] = useState();
+  useEffect(() => {
+      const checkDonor = async () => {
+        if (!user) return;
+        try {
+          const donorRef = doc(db, "donors", user.uid);
+          const donorSnap = await getDoc(donorRef);
+          if (donorSnap.exists()) {
+            setDonorData(donorSnap)
+          }
+        } catch (err) {
+          alert(err);
+        }
+      };
+      checkDonor();
+    }, [user]);
+    return DonorData;
+}
+
+
 
 export default function BecomeDonorPage() {
   const user = useCurrentUser();
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(true);
-  const [isDonor, setIsDonor] = useState(false);
+  const isDonor = UseIsDonor();
 
 
   useEffect(() => {
-      if (isDonor && !loading) {
+      if (isDonor) {
         navigate("/dashboard");
       }
-    }, [isDonor, loading, navigate]);
+    }, [isDonor , navigate]);
 
-  //Check if already a donor
-  useEffect(() => {
-    const checkDonor = async () => {
-      if (!user) return;
-      try {
-        const donorRef = doc(db, "donors", user.uid);
-        const donorSnap = await getDoc(donorRef);
-        if (donorSnap.exists()) {
-          setIsDonor(true);
-        }
-      } catch (err) {
-        alert(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkDonor();
-  }, [user]);
 
   if (user === null) {
       return <Ask_to_Sign_In />;
@@ -61,7 +88,6 @@ export default function BecomeDonorPage() {
 }
 
 //Donor Form If not donor
-
 const DonorForm = ({ user }) => {
   const [name, setName] = useState(user?.displayName || "");
   const [email, setEmail] = useState(user?.email || "");
@@ -77,6 +103,8 @@ const DonorForm = ({ user }) => {
   const [lastDonation, setLastDonation] = useState("");
   const [donationCount, setDonationCount] = useState(0);
   const [available, setAvailable] = useState(true);
+  const [userType , setUserType] = useState("donor");
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -105,6 +133,7 @@ const DonorForm = ({ user }) => {
       available,
       fcmToken: "", // You can set this if you implement push notifications
       createdAt: serverTimestamp(),
+      userType,
     };
 
     try {
@@ -123,6 +152,7 @@ const DonorForm = ({ user }) => {
       setLastDonation("");
       setDonationCount(0);
       setAvailable(true);
+      setUserType("donor");
     } catch (err) {
       console.error("Error adding donor: ", err);
       alert("Failed to submit. Please try again.");

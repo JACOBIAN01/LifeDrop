@@ -4,52 +4,53 @@ import { doc, getDoc } from "firebase/firestore";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { useCurrentUser } from "../services/AuthService";
+import {UseIsDonor} from "./BecomeDonorPage";
 
 export default function Dashboard() {
   const user = useCurrentUser();
   const [donorData, setDonorData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const isDonor = UseIsDonor();
 
-  useEffect(() => {
+
+useEffect(() => {
     const fetchDonorData = async () => {
       try {
         const donorRef = doc(db, "donors", user.uid);
         const donorSnap = await getDoc(donorRef);
-
         if (donorSnap.exists()) {
           setDonorData(donorSnap.data());
-          setLoading(false);
         } else {
-          console.log("No donor data found");
-          setLoading(true);
+          alert("No donor data found");
         }
       } catch (err) {
         console.error("Error fetching donor data:", err);
       }
     };
-
-    if (user?.uid) {
+    if (user?.uid && isDonor) {
       fetchDonorData();
     }
-  }, [user]);
+  }, [user,isDonor]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-red-50">
-        <h1 className="text-xl font-semibold text-red-700 animate-pulse">
-          Loading Data...
-        </h1>
-      </div>
-    );
-  }
+
+  // if (loading) {
+  //   return (
+  //     <div className="flex items-center justify-center h-screen bg-red-50">
+  //       <h1 className="text-xl font-semibold text-red-700 animate-pulse">
+  //         Loading Data...
+  //       </h1>
+  //     </div>
+  //   );
+  // }
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100">
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 py-10">
         <h1 className="text-2xl md:text-3xl font-bold text-red-800 text-center">
-          Welcome to the Dashboard {user.displayName || "User"}
+          Welcome to the Dashboard {user ? user.displayName : "User"}
         </h1>
 
         {donorData ? (
@@ -87,7 +88,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <p className="text-center mt-6 text-gray-600">
-            Loading donor details...
+         Become a Donor and Enjoy Dashboard!
           </p>
         )}
       </div>
