@@ -13,79 +13,66 @@ import { useCurrentUser } from "../services/AuthService";
 import { useNavigate } from "react-router-dom";
 
 
-export function UseIsDonor(){
+// eslint-disable-next-line react-refresh/only-export-components
+export function useDonorStatus() {
   const user = useCurrentUser();
-  const [isDonor ,SetDonor] = useState(false);
+  const [isDonor, setIsDonor] = useState(undefined);
+  const [donorData, setDonorData] = useState(null);
 
-  useEffect(()=>{
-    const checkDonor = async () =>{
-      if(!user) return;
-      try{
-       const donorRef = doc(db, "donors", user.uid);
-          const donorSnap = await getDoc(donorRef);
-          if (donorSnap.exists()) {
-            SetDonor(true);
-          }
-      }catch(err){
-        alert(err);
-      }
-    }
-      checkDonor();
-  },[user])
-
-  return isDonor;
-}
-
-
-export function Donor(){
-  const user = useCurrentUser();
-  const [DonorData , setDonorData] = useState();
   useEffect(() => {
-      const checkDonor = async () => {
-        if (!user) return;
-        try {
-          const donorRef = doc(db, "donors", user.uid);
-          const donorSnap = await getDoc(donorRef);
-          if (donorSnap.exists()) {
-            setDonorData(donorSnap)
-          }
-        } catch (err) {
-          alert(err);
-        }
-      };
-      checkDonor();
-    }, [user]);
-    return DonorData;
-}
+    if (!user) return;
 
+    const fetchDonorData = async () => {
+      try {
+        const donorRef = doc(db, "donors", user.uid);
+        const donorSnap = await getDoc(donorRef);
+        if (donorSnap.exists()) {
+          setIsDonor(true);
+          setDonorData(donorSnap.data());
+        } else {
+          setIsDonor(false);
+          setDonorData(null);
+        }
+      } catch (err) {
+        console.error("Error fetching donor data:", err);
+        setIsDonor(false);
+        setDonorData(null);
+      }
+    };
+
+    fetchDonorData();
+  }, [user]);
+
+  return { isDonor, donorData };
+}
 
 
 export default function BecomeDonorPage() {
   const user = useCurrentUser();
   const navigate = useNavigate();
 
-  const isDonor = UseIsDonor();
+  const { isDonor,  } = useDonorStatus();
 
 
   useEffect(() => {
-      if (isDonor) {
-        navigate("/dashboard");
-      }
-    }, [isDonor , navigate]);
-
+    if (isDonor) {
+      navigate("/dashboard");
+    }
+  }, [isDonor, navigate]);
 
   if (user === null) {
-      return <Ask_to_Sign_In />;
+    return <Ask_to_Sign_In />;
   }
 
-  if(!isDonor && user!=null){
-    return(
+  if (!isDonor && user != null) {
+    return (
       <>
-        <DonorForm user={user}/>
+        <DonorForm user={user} />
       </>
-    )
+    );
   }
 }
+
 
 //Donor Form If not donor
 const DonorForm = ({ user }) => {
@@ -103,8 +90,7 @@ const DonorForm = ({ user }) => {
   const [lastDonation, setLastDonation] = useState("");
   const [donationCount, setDonationCount] = useState(0);
   const [available, setAvailable] = useState(true);
-  const [userType , setUserType] = useState("donor");
-
+  const [userType, setUserType] = useState("donor");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -322,4 +308,3 @@ const DonorForm = ({ user }) => {
     </>
   );
 };
-
