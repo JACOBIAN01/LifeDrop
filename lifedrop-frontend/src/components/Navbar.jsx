@@ -65,7 +65,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-gradient-to-r from-rose-200 via-red-200 to-rose-300 shadow-sm">
+      <nav className="bg-gradient-to-r from-rose-200 via-red-200 to-rose-300 shadow-sm ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
