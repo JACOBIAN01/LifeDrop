@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useDonorStatus } from "../pages/BecomeDonorPage";
-import { useState } from "react";
+
 
 export default function Hero() {
   const navigate = useNavigate();
