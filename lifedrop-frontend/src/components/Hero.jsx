@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-
+import { useDonorStatus } from "../pages/BecomeDonorPage";
+import { useState } from "react";
 
 export default function Hero() {
   const navigate = useNavigate();
-  // const isDonor = UseIsDonor();
+  const { isDonor } = useDonorStatus();
 
   return (
     <section className="relative w-full h-screen overflow-hidden">
@@ -29,26 +30,18 @@ export default function Hero() {
           LifeDrop connects donors and patients in real-time for urgent needs.
         </p>
         <div className="flex justify-center items-center gap-5">
-          <button
-            onClick={() => navigate("/donor")}
-            className="mt-6 bg-red-500 hover:bg-red-600 text-white border border-white px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
-          >
-            Be a Hero
-          </button>
-
-          {/* {isDonor ? (
+          {isDonor ? (
+            <p className="mt-6 text-green-600 bg-green-100 border border-green-400 px-6 py-3 rounded-xl text-lg font-semibold shadow-md">
+              Thank You for become a Donor
+            </p>
+          ) : (
             <button
               onClick={() => navigate("/donor")}
               className="mt-6 bg-red-500 hover:bg-red-600 text-white border border-white px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
             >
               Be a Hero
             </button>
-          ) : (
-            <p className="mt-6 text-green-600 bg-green-100 border border-green-400 px-6 py-3 rounded-xl text-lg font-semibold shadow-md">
-              Thank You for become a Donor
-            </p>
-          )} */}
-
+          )}
           <button
             onClick={() => navigate("/request")}
             className="mt-6 bg-white hover:bg-red-50 text-red-600 border border-red-500 px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
