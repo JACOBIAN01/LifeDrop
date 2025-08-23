@@ -8,7 +8,6 @@ export default function Dashboard() {
   const user = useCurrentUser();
   const { isDonor, donorData } = useDonorStatus();
 
-  if (!user) return <Loading message="Signing In..." />;
   if (isDonor === undefined) return <Loading message="Checking Dashboard..." />;
   if (isDonor && !donorData) return <Loading message="Loading Donor Data..." />;
 
@@ -29,7 +28,6 @@ export default function Dashboard() {
     </div>
   );
 }
-
 
 function DonorDashboard({ donorData }) {
   const navigate = useNavigate();
