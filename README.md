@@ -1,6 +1,6 @@
 # LifeDrop
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 [![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/JACOBIAN01/LifeDrop)
 
 LifeDrop is a community-focused web application designed to streamline blood donation and urgent blood requests. It connects donors with recipients, enabling immediate communication and seamless donation management.
