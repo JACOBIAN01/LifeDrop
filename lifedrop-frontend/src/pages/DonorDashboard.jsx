@@ -1,7 +1,10 @@
 import { useNavigate } from "react-router-dom";
+import {useRequestStatus} from "./ManageRequest";
+
 
 export default function DonorDashboard({ donorData }) {
   const navigate = useNavigate();
+  const RequestData = useRequestStatus();
 
   // Motivational quotes
   const quotes = [
@@ -14,7 +17,6 @@ export default function DonorDashboard({ donorData }) {
 
   return (
     <div className="mt-10 max-w-6xl mx-auto px-4 space-y-8">
-
       {/* Motivational Quote Card */}
       <div className="bg-red-50 border border-red-200 rounded-2xl shadow-sm p-4 text-center">
         <p className="italic text-red-700 text-lg font-medium">
@@ -64,6 +66,7 @@ export default function DonorDashboard({ donorData }) {
             <span className="font-medium text-red-800">State:</span>{" "}
             {donorData?.state || "N/A"}
           </p>
+
           <p>
             <span className="font-medium text-red-800">Phone:</span>{" "}
             {donorData?.phone || "N/A"}
@@ -85,6 +88,38 @@ export default function DonorDashboard({ donorData }) {
             {donorData?.address || "N/A"}
           </p>
         </div>
+      </div>
+
+      {/* 🔹 Blood Request Card */}
+      <div className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition">
+        <h3 className="text-red-700 font-semibold text-lg mb-4">
+          Your Blood Request
+        </h3>
+
+        {!RequestData && (
+          <p className="text-gray-600">No active blood request.</p>
+        )}
+
+        {RequestData && (
+          <div className="border border-red-200 rounded-xl p-4 flex flex-col md:flex-row justify-between items-start md:items-center shadow-sm">
+            <div>
+              <p className="font-bold text-red-700">
+                Blood Group: {RequestData.bloodGroupNeeded || "N/A"}
+              </p>
+              <p className="text-gray-600 text-sm">
+                City: {RequestData.city || "N/A"}
+              </p>
+              <p className="text-gray-600 text-sm">
+                Urgency: {RequestData.patientCondition || "N/A"}
+              </p>
+            </div>
+            <div className="mt-2 md:mt-0">
+              <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium">
+                {RequestData.responses?.length || 0} Responses
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Action Buttons */}

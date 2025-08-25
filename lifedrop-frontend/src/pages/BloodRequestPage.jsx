@@ -1,19 +1,13 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { db } from "../services/firebase";
-import {
-  collection,
-  addDoc,
-  serverTimestamp,
-  Timestamp,
-} from "firebase/firestore";
+import { doc, setDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { useCurrentUser } from "../services/AuthService";
-
 
 function Ask_to_Sign_In() {
   return (
     <>
-    <Navbar/>
+      <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-rose-50 to-red-50 flex items-center justify-center px-4">
         <div className="max-w-md w-full bg-white shadow-lg rounded-2xl p-8 text-center">
           <h1 className="text-3xl font-bold text-rose-500 mb-4">
@@ -28,14 +22,9 @@ function Ask_to_Sign_In() {
   );
 }
 
-
-
 export default function BloodRequestPage() {
-
   const user = useCurrentUser();
 
-  const [name, setName] = useState(user?.displayName || "");
-  const [email, setEmail] = useState(user?.email || "");
   const [bloodGroupNeeded, setBloodGroupNeeded] = useState("");
   const [hospitalName, setHospitalName] = useState("");
   const [hospitalAddress, setHospitalAddress] = useState("");
@@ -47,10 +36,14 @@ export default function BloodRequestPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [status, setStatus] = useState(""); // or notes, your choice
 
-  //
+
   if (user === null) {
-      return <Ask_to_Sign_In />;
-    }
+    return <Ask_to_Sign_In />;
+  }
+
+  if(user?.name===null || user?.email===null){
+      alert("Please Update your Name , Email")
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,8 +54,8 @@ export default function BloodRequestPage() {
       : null;
 
     const requestData = {
-      name,
-      email,
+      name:user?.displayName,
+      email:user?.email,
       bloodGroupNeeded,
       hospitalName,
       hospitalAddress,
@@ -77,7 +70,7 @@ export default function BloodRequestPage() {
     };
 
     try {
-      await addDoc(collection(db, "requests"), requestData);
+      await setDoc(doc(db, "requests", user.uid), requestData, { merge: true });
       alert("Your blood request has been submitted successfully!");
       // Reset form fields except name/email
       setBloodGroupNeeded("");
@@ -92,7 +85,6 @@ export default function BloodRequestPage() {
       setStatus("");
     } catch (err) {
       console.error("Error adding document: ", err);
-      // alert("Failed to submit request. Please try again.", err);
       alert(err);
     }
   };
@@ -109,17 +101,15 @@ export default function BloodRequestPage() {
             <input
               type="text"
               placeholder="Full Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
+              value={user?.displayName}
+              readOnly
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-300"
             />
 
             <input
               type="email"
-              onChange={(e) => setEmail(e.target.value)}
               placeholder="Email"
-              value={email}
+              value={user?.email}
               readOnly
               className="w-full px-4 py-2 border bg-gray-50 rounded-lg focus:outline-none"
             />
@@ -238,5 +228,3 @@ export default function BloodRequestPage() {
     </>
   );
 }
-
-
