@@ -1,40 +1,58 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useCurrentUser } from "../services/AuthService";
 import { db } from "../services/firebase";
-import {
-  doc,
-  getDoc,
-  collection,
-  query,
-  onSnapshot,
-} from "firebase/firestore";
+import { collection, query, onSnapshot,where } from "firebase/firestore";
 
 
 export function useRequestStatus() {
   const user = useCurrentUser();
-  const [RequestData, setRequestData] = useState(null);
+  const [requestData, setRequestData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      setRequestData([]);
+      return;
+    }
 
-    const fetchRequestData = async () => {
-      try {
-        const reqRef = doc(db, "requests", user.uid);
-        const reqSnap = await getDoc(reqRef);
-        if (reqSnap.exists()) {
-          setRequestData(reqSnap.data());
-        } else {
-          setRequestData(null);
+    try {
+      const q = query(
+        collection(db, "requests"),
+        where("email", "==", user?.email)
+      );
+
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const reqs = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setRequestData(reqs);
+          setLoading(false);
+        },
+        (err) => {
+          console.error("Error fetching user requests:", err);
+          setError(err);
+          setLoading(false);
         }
-      } catch (err) {
-        console.error("Error fetching donor data:", err);
-        setRequestData(null);
-      }
-    };
-    fetchRequestData();
+      );
+
+      return () => unsubscribe();
+    } catch (err) {
+      console.error("Error setting up request query:", err);
+      setError(err);
+      setLoading(false);
+    }
   }, [user]);
-return RequestData;
+
+  return { requestData, loading, error };
 }
+
+
+
 
 
 export function useAllRequests() {
@@ -44,7 +62,6 @@ export function useAllRequests() {
 
   useEffect(() => {
     const q = query(collection(db, "requests"));
-
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
@@ -66,4 +83,3 @@ export function useAllRequests() {
   }, []);
   return { requests, loading, error };
 }
-

@@ -1,8 +1,8 @@
 import Navbar from "../components/Navbar";
-import { useNavigate } from "react-router-dom";
 import { useCurrentUser } from "../services/AuthService";
 import {useDonorStatus} from "./BecomeDonorPage";
 import DonorDashboard from "./DonorDashboard";
+import NonDonorDashboard from "./NonDonorDashboard";
 
 
 export default function Dashboard() {
@@ -30,28 +30,6 @@ export default function Dashboard() {
   );
 }
 
-function NonDonorDashboard() {
-  const navigate = useNavigate();
-  return (
-    <div className="mt-8 bg-white border border-green-200 rounded-2xl shadow-md p-8 flex flex-col items-center">
-      <p className="text-center mt-2 text-lg font-semibold text-green-700 bg-green-100 border border-green-300 px-6 py-3 rounded-xl shadow">
-        Become a Donor
-      </p>
-      <button
-        onClick={() => navigate("/request")}
-        className="mt-6 bg-white hover:bg-red-50 text-red-600 border border-red-500 px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
-      >
-        Ask for Help
-      </button>
-      <button
-        onClick={() => navigate("/donor")}
-        className="mt-6 bg-red-500 hover:bg-red-600 text-white border border-white px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
-      >
-        Be a Hero
-      </button>
-    </div>
-  );
-}
 
 function Loading({ message }) {
   return (

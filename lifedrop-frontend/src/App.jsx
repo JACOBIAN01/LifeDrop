@@ -3,7 +3,6 @@ import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import BecomeDonorPage from "./pages/BecomeDonorPage";
 import RequestUserCheck from "./pages/BloodRequestPage";
-import Test from "./pages/FirestoreTest";
 import Dashboard from "./pages/Dashboard";
 
 
@@ -17,7 +16,6 @@ export default function App() {
         <Route path="/donor" element={<BecomeDonorPage />} />
         <Route path="/request" element={<RequestUserCheck />} />
         <Route path="/dashboard" element={<Dashboard/>} />
-        <Route path="/test" element={<Test />} />
       </Routes>
     </Router>
   );
