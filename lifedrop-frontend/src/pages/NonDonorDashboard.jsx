@@ -1,16 +1,36 @@
 import { useNavigate } from "react-router-dom";
 // Lucide Icons
-import { PlusCircle, Heart, Home } from "lucide-react";
+// Lucide Icons
+import { User, Heart, Home, Users} from "lucide-react";
+import { PlusCircle} from "lucide-react";
+import { useState } from "react";
+import { AllBloodRequest } from "./DonorDashboard";
+import { MyBloodRequest } from "./DonorDashboard";
+
+
+
 
 export default function NonDonorDashboard() {
   const navigate = useNavigate();
+    const [AllReq, SetAllReq] = useState(false);
+    const [MyReq, SetMyReq] = useState(false);
+  
+    const handleAllReq = () => {
+      SetMyReq(false);
+      SetAllReq(true);
+    };
+    const handleMyReq = () => {
+      SetMyReq(true);
+      SetAllReq(false);
+    };
+  
 
   return (
     <div className="mt-10 max-w-4xl mx-auto px-4 space-y-8">
       {/* Info / Welcome Card */}
       <div className="bg-white border border-green-200 rounded-2xl shadow-md p-8 flex flex-col items-center gap-4">
         <h2 className="text-3xl font-bold text-green-600 flex items-center gap-2">
-          <Heart className="w-6 h-6" /> Welcome 
+          <Heart className="w-6 h-6" /> Welcome
         </h2>
         <p className="text-gray-700 text-center">
           You can help save lives by donating blood or requesting help for
@@ -40,6 +60,24 @@ export default function NonDonorDashboard() {
             <Home className="w-5 h-5" /> Home
           </button>
         </div>
+        
+        {/* 🔹 Blood Request Card */}
+        <div className="flex items-center gap-5">
+          <button
+            onClick={handleAllReq}
+            className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition flex items-center gap-2"
+          >
+            <Users size={16} /> All Request
+          </button>
+          <button
+            onClick={handleMyReq}
+            className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition flex items-center gap-2"
+          >
+            <User size={16} /> My Request
+          </button>
+        </div>
+        {AllReq && <AllBloodRequest />}
+        {MyReq && <MyBloodRequest />}
       </div>
     </div>
   );

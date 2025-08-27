@@ -113,7 +113,6 @@ export default function BloodRequestPage() {
               readOnly
               className="w-full px-4 py-2 border bg-gray-50 rounded-lg focus:outline-none"
             />
-
             <select
               value={bloodGroupNeeded}
               onChange={(e) => setBloodGroupNeeded(e.target.value)}
