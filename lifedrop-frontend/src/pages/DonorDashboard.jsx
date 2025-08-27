@@ -7,6 +7,9 @@ import { useCurrentUser } from "../services/AuthService";
 import { doc, updateDoc} from "firebase/firestore";
 import {db} from "../services/firebase"
 
+// Lucide Icons
+import { User, Heart, Home, Users, Activity } from "lucide-react";
+
 export default function DonorDashboard({ donorData }) {
   const navigate = useNavigate();
   const [AllReq, SetAllReq] = useState(false);
@@ -20,7 +23,6 @@ export default function DonorDashboard({ donorData }) {
     SetMyReq(true);
     SetAllReq(false);
   };
-
 
   // Motivational quotes
   const quotes = [
@@ -44,11 +46,11 @@ export default function DonorDashboard({ donorData }) {
       <div className="bg-gradient-to-r from-red-600 to-red-500 text-white rounded-3xl shadow-xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-6">
           <div className="bg-white rounded-full w-24 h-24 flex items-center justify-center text-3xl font-bold text-red-600">
-            {donorData?.name?.[0] || "?"}
+            <User size={36} />
           </div>
           <div>
-            <h2 className="text-3xl font-bold">
-              {donorData?.name || "Anonymous"}
+            <h2 className="text-3xl font-bold flex items-center gap-2">
+              {donorData?.name || "Anonymous"} <Heart size={20} />
             </h2>
             <p className="text-lg opacity-90">
               {donorData?.email || "No Email"}
@@ -63,15 +65,17 @@ export default function DonorDashboard({ donorData }) {
             <p className="text-2xl font-bold">
               {donorData?.donationCount ?? 0}
             </p>
-            <p className="text-sm">Donations</p>
+            <p className="text-sm flex items-center gap-1">
+              <Activity size={16} /> Donations
+            </p>
           </div>
         </div>
       </div>
 
       {/* Personal Details Card */}
       <div className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition">
-        <h3 className="text-red-700 font-semibold text-lg mb-4">
-          Personal Details
+        <h3 className="text-red-700 font-semibold text-lg mb-4 flex items-center gap-2">
+          <Users size={18} /> Personal Details
         </h3>
         <div className="grid md:grid-cols-2 gap-4 text-gray-700">
           <p>
@@ -82,7 +86,6 @@ export default function DonorDashboard({ donorData }) {
             <span className="font-medium text-red-800">State:</span>{" "}
             {donorData?.state || "N/A"}
           </p>
-
           <p>
             <span className="font-medium text-red-800">Phone:</span>{" "}
             {donorData?.phone || "N/A"}
@@ -106,36 +109,37 @@ export default function DonorDashboard({ donorData }) {
         </div>
       </div>
 
-
       {/* 🔹 Blood Request Card */}
       <div className="flex items-center gap-5">
         <button
-        onClick={handleAllReq}
-         className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition">
-          All Request
+          onClick={handleAllReq}
+          className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition flex items-center gap-2"
+        >
+          <Users size={16} /> All Request
         </button>
         <button
-        onClick={handleMyReq}
-         className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition">
-          My Request
+          onClick={handleMyReq}
+          className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition flex items-center gap-2"
+        >
+          <User size={16} /> My Request
         </button>
       </div>
-      {AllReq&&<AllBloodRequest/>}
-      {MyReq&& <MyBloodRequest/>}
+      {AllReq && <AllBloodRequest />}
+      {MyReq && <MyBloodRequest />}
 
       {/* Action Buttons */}
       <div className="flex flex-col md:flex-row gap-4 justify-center mt-4">
         <button
           onClick={() => navigate("/request")}
-          className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+          className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2"
         >
-          Ask for Help
+          <Heart size={20} /> Ask for Help
         </button>
         <button
           onClick={() => navigate("/")}
-          className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-8 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+          className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-8 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2"
         >
-          Home
+          <Home size={20} /> Home
         </button>
       </div>
     </div>
@@ -143,9 +147,9 @@ export default function DonorDashboard({ donorData }) {
 }
 
 
-function MyBloodRequest() {
+export function MyBloodRequest() {
   const { requestData, loading, error } = useRequestStatus();
-  const [showResponse ,setShowresponse] = useState(false);
+  const [showResponse ,setShowresponse] = useState(true);
 
   const handleShowResponse = ()=>{
     setShowresponse(!showResponse)
@@ -232,7 +236,7 @@ function MyBloodRequest() {
 }
 
 
-function AllBloodRequest() {
+export function AllBloodRequest() {
   const { requests, loading, error } = useAllRequests();
   const user = useCurrentUser();
 
