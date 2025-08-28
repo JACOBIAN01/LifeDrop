@@ -52,9 +52,6 @@ export function useRequestStatus() {
 }
 
 
-
-
-
 export function useAllRequests() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);

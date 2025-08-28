@@ -1,82 +1,77 @@
 import { useNavigate } from "react-router-dom";
-// Lucide Icons
-// Lucide Icons
-import { User, Heart, Home, Users} from "lucide-react";
-import { PlusCircle} from "lucide-react";
+import { User, Heart, Home, Users, PlusCircle } from "lucide-react";
 import { useState } from "react";
-import { AllBloodRequest } from "./DonorDashboard";
-import { MyBloodRequest } from "./DonorDashboard";
-
-
-
+import { AllBloodRequest, MyBloodRequest } from "./DonorDashboard";
 
 export default function NonDonorDashboard() {
   const navigate = useNavigate();
-    const [AllReq, SetAllReq] = useState(false);
-    const [MyReq, SetMyReq] = useState(false);
-  
-    const handleAllReq = () => {
-      SetMyReq(false);
-      SetAllReq(true);
-    };
-    const handleMyReq = () => {
-      SetMyReq(true);
-      SetAllReq(false);
-    };
-  
+  const [AllReq, SetAllReq] = useState(false);
+  const [MyReq, SetMyReq] = useState(false);
 
   return (
-    <div className="mt-10 max-w-4xl mx-auto px-4 space-y-8">
+    <div className="mt-10 max-w-5xl mx-auto px-4 space-y-10">
       {/* Info / Welcome Card */}
-      <div className="bg-white border border-green-200 rounded-2xl shadow-md p-8 flex flex-col items-center gap-4">
-        <h2 className="text-3xl font-bold text-green-600 flex items-center gap-2">
-          <Heart className="w-6 h-6" /> Welcome
+      <div className="bg-gradient-to-r from-red-50 to-rose-50 border border-rose-200 rounded-3xl shadow-xl p-10 flex flex-col items-center gap-6">
+        <h2 className="text-4xl font-extrabold text-rose-600 flex items-center gap-3 animate-pulse">
+          <Heart className="w-7 h-7" /> Welcome
         </h2>
-        <p className="text-gray-700 text-center">
+        <p className="text-gray-700 text-center text-lg max-w-xl">
           You can help save lives by donating blood or requesting help for
-          someone in need.
+          someone in need. Every act of kindness matters.
         </p>
 
         {/* Action Buttons */}
-        <div className="flex flex-col md:flex-row gap-4 mt-6">
+        <div className="flex flex-col md:flex-row gap-5 mt-8 w-full justify-center">
           <button
             onClick={() => navigate("/request")}
-            className="bg-white hover:bg-red-50 text-red-600 border border-red-500 px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2 justify-center"
+            className="flex items-center gap-3 justify-center bg-white text-red-600 border border-red-500 px-6 py-3 rounded-2xl text-lg font-semibold shadow-md hover:shadow-lg hover:bg-red-50 transition-all duration-300 transform hover:-translate-y-1"
           >
-            <PlusCircle className="w-5 h-5" /> Ask for Help
+            <PlusCircle className="w-6 h-6" /> Ask for Help
           </button>
 
           <button
             onClick={() => navigate("/donor")}
-            className="bg-red-500 hover:bg-red-600 text-white border border-white px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2 justify-center"
+            className="flex items-center gap-3 justify-center bg-red-500 text-white px-6 py-3 rounded-2xl text-lg font-semibold shadow-md hover:shadow-lg hover:bg-red-600 transition-all duration-300 transform hover:-translate-y-1"
           >
-            <Heart className="w-5 h-5" /> Be a Hero
+            <Heart className="w-6 h-6" /> Be a Hero
           </button>
 
           <button
             onClick={() => navigate("/")}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2 justify-center"
+            className="flex items-center gap-3 justify-center bg-gray-100 text-gray-700 px-6 py-3 rounded-2xl text-lg font-semibold shadow-md hover:shadow-lg hover:bg-gray-200 transition-all duration-300 transform hover:-translate-y-1"
           >
-            <Home className="w-5 h-5" /> Home
+            <Home className="w-6 h-6" /> Home
           </button>
         </div>
-        
-        {/* 🔹 Blood Request Card */}
-        <div className="flex items-center gap-5">
+      </div>
+
+      {/* All Requests Card */}
+      <div className="bg-white border border-rose-200 rounded-3xl shadow-xl p-8">
+        <div className="flex items-center gap-4 mb-6">
+          <Users size={20} className="text-rose-500" />
+          <h3 className="text-2xl font-bold text-rose-600">All Requests</h3>
           <button
-            onClick={handleAllReq}
-            className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition flex items-center gap-2"
+            onClick={() => SetAllReq(!AllReq)}
+            className="ml-auto bg-rose-100 text-rose-600 px-4 py-2 rounded-xl font-semibold hover:bg-rose-200 transition"
           >
-            <Users size={16} /> All Request
-          </button>
-          <button
-            onClick={handleMyReq}
-            className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition flex items-center gap-2"
-          >
-            <User size={16} /> My Request
+            {AllReq ? "Hide" : "View"}
           </button>
         </div>
         {AllReq && <AllBloodRequest />}
+      </div>
+
+      {/* My Requests Card */}
+      <div className="bg-white border border-rose-200 rounded-3xl shadow-xl p-8">
+        <div className="flex items-center gap-4 mb-6">
+          <User size={20} className="text-rose-500" />
+          <h3 className="text-2xl font-bold text-rose-600">My Requests</h3>
+          <button
+            onClick={() => SetMyReq(!MyReq)}
+            className="ml-auto bg-rose-100 text-rose-600 px-4 py-2 rounded-xl font-semibold hover:bg-rose-200 transition"
+          >
+            {MyReq ? "Hide" : "View"}
+          </button>
+        </div>
         {MyReq && <MyBloodRequest />}
       </div>
     </div>
