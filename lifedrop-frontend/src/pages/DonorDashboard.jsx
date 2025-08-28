@@ -1,11 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { useRequestStatus } from "./ManageRequest";
-import { useAllRequests } from "./ManageRequest";
+import { useRequestStatus, useAllRequests } from "./ManageRequest";
 import { useState } from "react";
-import { getDoc } from "firebase/firestore";
+import { getDoc, doc, updateDoc } from "firebase/firestore";
+import { db } from "../services/firebase";
 import { useCurrentUser } from "../services/AuthService";
-import { doc, updateDoc} from "firebase/firestore";
-import {db} from "../services/firebase"
+
 
 // Lucide Icons
 import { User, Heart, Home, Users, Activity } from "lucide-react";
@@ -14,15 +13,6 @@ export default function DonorDashboard({ donorData }) {
   const navigate = useNavigate();
   const [AllReq, SetAllReq] = useState(false);
   const [MyReq, SetMyReq] = useState(false);
-
-  const handleAllReq = () => {
-    SetMyReq(false);
-    SetAllReq(true);
-  };
-  const handleMyReq = () => {
-    SetMyReq(true);
-    SetAllReq(false);
-  };
 
   // Motivational quotes
   const quotes = [
@@ -109,23 +99,35 @@ export default function DonorDashboard({ donorData }) {
         </div>
       </div>
 
-      {/* 🔹 Blood Request Card */}
-      <div className="flex items-center gap-5">
-        <button
-          onClick={handleAllReq}
-          className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition flex items-center gap-2"
-        >
-          <Users size={16} /> All Request
-        </button>
-        <button
-          onClick={handleMyReq}
-          className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition flex items-center gap-2"
-        >
-          <User size={16} /> My Request
-        </button>
+      {/* 🔹 All Requests Card */}
+      <div className="bg-white border border-rose-200 rounded-3xl shadow-xl p-8">
+        <div className="flex items-center gap-4 mb-6">
+          <Users size={20} className="text-rose-500" />
+          <h3 className="text-2xl font-bold text-rose-600">All Requests</h3>
+          <button
+            onClick={() => SetAllReq(!AllReq)}
+            className="ml-auto bg-rose-100 text-rose-600 px-4 py-2 rounded-xl font-semibold hover:bg-rose-200 transition"
+          >
+            {AllReq ? "Hide" : "View"}
+          </button>
+        </div>
+        {AllReq && <AllBloodRequest DonorData={donorData}/>}
       </div>
-      {AllReq && <AllBloodRequest />}
-      {MyReq && <MyBloodRequest />}
+
+      {/* 🔹 My Requests Card */}
+      <div className="bg-white border border-rose-200 rounded-3xl shadow-xl p-8">
+        <div className="flex items-center gap-4 mb-6">
+          <User size={20} className="text-rose-500" />
+          <h3 className="text-2xl font-bold text-rose-600">My Requests</h3>
+          <button
+            onClick={() => SetMyReq(!MyReq)}
+            className="ml-auto bg-rose-100 text-rose-600 px-4 py-2 rounded-xl font-semibold hover:bg-rose-200 transition"
+          >
+            {MyReq ? "Hide" : "View"}
+          </button>
+        </div>
+        {MyReq && <MyBloodRequest />}
+      </div>
 
       {/* Action Buttons */}
       <div className="flex flex-col md:flex-row gap-4 justify-center mt-4">
@@ -149,79 +151,108 @@ export default function DonorDashboard({ donorData }) {
 
 export function MyBloodRequest() {
   const { requestData, loading, error } = useRequestStatus();
-  const [showResponse ,setShowresponse] = useState(true);
+  const [showResponse, setShowResponse] = useState(true);
 
-  const handleShowResponse = ()=>{
-    setShowresponse(!showResponse)
-  }
+  const handleShowResponse = () => setShowResponse(!showResponse);
 
-  const AllResponse = ()=>{
+  const AllResponse = () => {
     return (
       <>
         {requestData.map((req) => (
           <div
             key={req.id}
-            className="border border-red-200 rounded-xl p-4 mb-4 shadow-sm"
+            className="border border-red-200 rounded-2xl p-6 mb-6 shadow-sm hover:shadow-md transition"
           >
-            <p className="font-bold text-red-700">
-              Blood Group: {req.bloodGroupNeeded || "N/A"}
+            <p className="font-bold text-red-700 text-lg mb-1">
+              Blood Group Needed: {req.bloodGroupNeeded || "N/A"}
             </p>
-            <p className="text-gray-600 text-sm">City: {req.city || "N/A"}</p>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 text-sm mb-1">
+              City: {req.city || "N/A"}
+            </p>
+            <p className="text-gray-600 text-sm mb-3">
               Urgency: {req.patientCondition || "N/A"}
             </p>
 
-            <div className="mt-3">
-              <h4 className="font-semibold text-red-600 text-sm mb-2">
-                Responses ({req.responses?.length || 0})
-              </h4>
+            <h4 className="font-semibold text-red-600 text-sm mb-3">
+              Responses ({req.responses?.length || 0})
+            </h4>
 
-              {req.responses?.length > 0 ? (
-                <ul className="space-y-2">
-                  {req.responses.map((resp, idx) => (
-                    <li
-                      key={idx}
-                      className="bg-red-50 border border-red-200 rounded-lg p-2 text-sm"
-                    >
-                      <p className="font-medium text-red-700">
+            {req.responses?.length > 0 ? (
+              <div className="space-y-4">
+                {req.responses.map((resp, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-red-50 border border-red-200 rounded-xl p-4 shadow-sm hover:shadow-md transition"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="font-medium text-red-700 text-md">
                         {resp.name || "Anonymous"}
                       </p>
-                      <p className="text-gray-600">{resp.email}</p>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-500 text-sm">No responses yet.</p>
-              )}
-            </div>
+                      <p className="text-gray-500 text-sm">
+                        {new Date(resp.timestamp).toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-2 text-gray-700 text-sm">
+                      <p>
+                        <span className="font-medium text-red-800">Email:</span>{" "}
+                        {resp.email || "N/A"}
+                      </p>
+                      <p>
+                        <span className="font-medium text-red-800">
+                          Blood Group:
+                        </span>{" "}
+                        {resp.bloodType || "N/A"}
+                      </p>
+                      <p>
+                        <span className="font-medium text-red-800">City:</span>{" "}
+                        {resp.city || "N/A"}
+                      </p>
+                      <p>
+                        <span className="font-medium text-red-800">
+                          Last Donation:
+                        </span>{" "}
+                        {resp.lastDonation
+                          ? new Date(resp.lastDonation).toLocaleDateString()
+                          : "N/A"}
+                      </p>
+                      <p>
+                        <span className="font-medium text-red-800">Phone:</span>{" "}
+                        {resp.phone || "N/A"}
+                      </p>
+                      <p>
+                        <span className="font-medium text-red-800">
+                          Gender:
+                        </span>{" "}
+                        {resp.gender || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-sm">No responses yet.</p>
+            )}
           </div>
         ))}
       </>
     );
-  }
+  };
 
-  if (loading) {
-    return <p className="text-gray-500">Loading requests...</p>;
-  }
-
-  if (error) {
-    return <p className="text-red-500">Error loading requests</p>;
-  }
-
-  if (!requestData || requestData.length === 0) {
+  if (loading) return <p className="text-gray-500">Loading requests...</p>;
+  if (error) return <p className="text-red-500">Error loading requests</p>;
+  if (!requestData || requestData.length === 0)
     return (
       <div className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition">
         <h3 className="text-red-700 font-semibold text-lg mb-4">
-          Your Blood Request
+          Your Blood Requests
         </h3>
         <p className="text-gray-600">No active requests right now.</p>
       </div>
     );
-  }
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition">
-      <h3 className="text-red-700 font-semibold text-lg mb-4 mt-2 ">
+      <h3 className="text-red-700 font-semibold text-lg mb-4 mt-2">
         Your Blood Requests
       </h3>
       <button
@@ -236,7 +267,9 @@ export function MyBloodRequest() {
 }
 
 
-export function AllBloodRequest() {
+
+
+export function AllBloodRequest({DonorData}) {
   const { requests, loading, error } = useAllRequests();
   const user = useCurrentUser();
 
@@ -266,6 +299,11 @@ export function AllBloodRequest() {
           name: user?.displayName || "Anonymous",
           email: user?.email,
           timestamp: new Date().toISOString(),
+          bloodType: DonorData?.bloodType || "N/A",
+          city: DonorData?.city || "N/A",
+          lastDonation: DonorData?.lastDonation || "N/A",
+          phone: DonorData?.phone || "N/A",
+          gender: DonorData?.gender || "N/A",
         },
       ],
     });
@@ -331,4 +369,3 @@ export function AllBloodRequest() {
     </div>
   );
 }
-
