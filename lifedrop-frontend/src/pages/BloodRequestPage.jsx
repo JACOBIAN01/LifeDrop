@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 import { db } from "../services/firebase";
 import { doc, setDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { useCurrentUser } from "../services/AuthService";
+import { useNavigate } from "react-router-dom";
 
 function Ask_to_Sign_In() {
   return (
@@ -24,6 +25,7 @@ function Ask_to_Sign_In() {
 
 export default function BloodRequestPage() {
   const user = useCurrentUser();
+  const navigate = useNavigate();
 
   const [bloodGroupNeeded, setBloodGroupNeeded] = useState("");
   const [hospitalName, setHospitalName] = useState("");
@@ -36,13 +38,12 @@ export default function BloodRequestPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [status, setStatus] = useState(""); // or notes, your choice
 
-
   if (user === null) {
     return <Ask_to_Sign_In />;
   }
 
-  if(user?.name===null || user?.email===null){
-      alert("Please Update your Name , Email")
+  if (user?.name === null || user?.email === null) {
+    alert("Please Update your Name , Email");
   }
 
   const handleSubmit = async (e) => {
@@ -54,8 +55,8 @@ export default function BloodRequestPage() {
       : null;
 
     const requestData = {
-      name:user?.displayName,
-      email:user?.email,
+      name: user?.displayName,
+      email: user?.email,
       bloodGroupNeeded,
       hospitalName,
       hospitalAddress,
@@ -71,6 +72,7 @@ export default function BloodRequestPage() {
 
     try {
       await setDoc(doc(db, "requests", user.uid), requestData, { merge: true });
+      navigate("/dashboard");
       alert("Your blood request has been submitted successfully!");
       // Reset form fields except name/email
       setBloodGroupNeeded("");
