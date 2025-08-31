@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useDonorStatus } from "../pages/BecomeDonorPage";
 
-
 export default function Hero() {
   const navigate = useNavigate();
   const { isDonor } = useDonorStatus();
@@ -47,6 +46,24 @@ export default function Hero() {
             className="mt-6 bg-white hover:bg-red-50 text-red-600 border border-red-500 px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
           >
             Ask for Help
+          </button>
+        </div>
+        {/* NGO HERO */}
+        <div
+          className="flex flex-col items-center justify-center mt-8 space-y-3 text-center 
+                bg-white/10 backdrop-blur-md rounded-2xl px-6 py-6 shadow-md"
+        >
+          {/* Tagline */}
+          <p className="text-white text-lg md:text-xl font-medium">
+            Partner with us — Register your Hospital or NGO today.
+          </p>
+
+          {/* Button */}
+          <button
+            onClick={() => navigate("/hreg")}
+            className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl text-lg font-semibold shadow-sm hover:shadow-md transition-all duration-200"
+          >
+            Register Your Organization
           </button>
         </div>
       </div>
