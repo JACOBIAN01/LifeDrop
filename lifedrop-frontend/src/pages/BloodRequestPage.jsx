@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
-import { db } from "../services/firebase";
-import { doc, setDoc, serverTimestamp, Timestamp } from "firebase/firestore";
+import { PostBloodRequest } from "../services/api";
 import { useCurrentUser } from "../services/AuthService";
 import { useNavigate } from "react-router-dom";
 import {
@@ -12,7 +11,6 @@ import {
   Droplet,
   AlertCircle,
 } from "lucide-react";
-
 
 function Ask_to_Sign_In() {
   return (
@@ -31,7 +29,6 @@ function Ask_to_Sign_In() {
     </>
   );
 }
-
 
 export default function BloodRequestPage() {
   const user = useCurrentUser();
@@ -56,11 +53,8 @@ export default function BloodRequestPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const neededByTimestamp = neededBy
-      ? Timestamp.fromDate(new Date(neededBy))
-      : null;
-
     const requestData = {
+      uid: user?.uid,
       name: user?.displayName,
       email: user?.email,
       bloodGroupNeeded,
@@ -69,27 +63,16 @@ export default function BloodRequestPage() {
       city,
       state,
       country,
-      neededBy: neededByTimestamp,
+      neededBy,
       patientCondition,
       phoneNumber,
       status,
-      requestedAt: serverTimestamp(),
     };
 
     try {
-      await setDoc(doc(db, "requests", user.uid), requestData, { merge: true });
+      await PostBloodRequest(requestData);
       navigate("/dashboard");
       alert("Your blood request has been submitted successfully!");
-      setBloodGroupNeeded("");
-      setHospitalName("");
-      setHospitalAddress("");
-      setCity("");
-      setState("");
-      setCountry("");
-      setNeededBy("");
-      setPatientCondition("Normal");
-      setPhoneNumber("");
-      setStatus("");
     } catch (err) {
       console.error("Error adding document: ", err);
       alert(err);
@@ -263,4 +246,3 @@ export default function BloodRequestPage() {
     </>
   );
 }
-

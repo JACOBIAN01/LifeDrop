@@ -1,18 +1,11 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { db } from "../services/firebase";
-import {
-  doc,
-  setDoc,
-  serverTimestamp,
-  Timestamp,
-  getDoc,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import Ask_to_Sign_In from "./BloodRequestPage";
 import { useCurrentUser } from "../services/AuthService";
 import { useNavigate } from "react-router-dom";
-
-
+import { DonorRegistration } from "../services/api";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useDonorStatus() {
@@ -47,19 +40,21 @@ export function useDonorStatus() {
   return { isDonor, donorData };
 }
 
-
 export default function BecomeDonorPage() {
   const user = useCurrentUser();
   const navigate = useNavigate();
 
-  const { isDonor,  } = useDonorStatus();
-
+  const { isDonor } = useDonorStatus();
 
   useEffect(() => {
     if (isDonor) {
       navigate("/dashboard");
     }
   }, [isDonor, navigate]);
+
+  if (isDonor === undefined) {
+    return <div className="text-center mt-10">Checking donor status...</div>;
+  }
 
   if (user === null) {
     return <Ask_to_Sign_In />;
@@ -74,11 +69,10 @@ export default function BecomeDonorPage() {
   }
 }
 
-
 //Donor Form If not donor
 const DonorForm = ({ user }) => {
-  const [name, setName] = useState(user?.displayName || "");
-  const [email, setEmail] = useState(user?.email || "");
+  const navigate = useNavigate();
+
   const [phone, setPhone] = useState("");
   const [gender, setGender] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
@@ -91,55 +85,34 @@ const DonorForm = ({ user }) => {
   const [lastDonation, setLastDonation] = useState("");
   const [donationCount, setDonationCount] = useState(0);
   const [available, setAvailable] = useState(true);
-  const [userType, setUserType] = useState("donor");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const dobTimestamp = dateOfBirth
-      ? Timestamp.fromDate(new Date(dateOfBirth))
-      : null;
-    const lastDonationTimestamp = lastDonation
-      ? Timestamp.fromDate(new Date(lastDonation))
-      : null;
-
     const donorData = {
-      name,
-      email,
+      uid: user.uid,
+      name: user ? user.displayName : "User",
+      email: user ? user.email : "Email",
       phone,
       gender,
-      dateOfBirth: dobTimestamp,
+      dateOfBirth,
       bloodType,
       address,
       city,
       state,
       country,
       pincode,
-      lastDonation: lastDonationTimestamp,
+      lastDonation,
       donationCount: Number(donationCount),
       available,
-      fcmToken: "", // You can set this if you implement push notifications
-      createdAt: serverTimestamp(),
-      userType,
+      fcmToken: "",
+      userType: "donor",
     };
 
     try {
-      await setDoc(doc(db, "donors", user.uid), donorData, { merge: true });
+      await DonorRegistration(donorData);
       alert("Thank you for becoming a donor! Your information has been saved.");
-      // Reset some fields except name and email
-      setPhone("");
-      setGender("");
-      setDateOfBirth("");
-      setBloodType("");
-      setAddress("");
-      setCity("");
-      setState("");
-      setCountry("");
-      setPincode("");
-      setLastDonation("");
-      setDonationCount(0);
-      setAvailable(true);
-      setUserType("donor");
+      navigate("/dashboard");
     } catch (err) {
       console.error("Error adding donor: ", err);
       alert("Failed to submit. Please try again.");
@@ -158,17 +131,15 @@ const DonorForm = ({ user }) => {
             <input
               type="text"
               placeholder="Full Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
+              value={user.displayName}
+              readOnly
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-300"
             />
 
             <input
-              onChange={(e) => setEmail(e.target.value)}
               type="email"
               placeholder="Email"
-              value={email}
+              value={user.email}
               readOnly
               className="w-full px-4 py-2 border bg-gray-50 rounded-lg focus:outline-none"
             />
@@ -282,7 +253,7 @@ const DonorForm = ({ user }) => {
               type="number"
               placeholder="Donation Count"
               value={donationCount}
-              onChange={(e) => setDonationCount(e.target.value)}
+              onChange={(e) => setDonationCount(Number(e.target.value))}
               min={0}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-300"
             />
