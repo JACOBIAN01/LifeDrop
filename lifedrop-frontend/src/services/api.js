@@ -12,3 +12,8 @@ export async function DonorRegistration(donorData){
   const res = await axios.post(`${API_URL}/NewDonorRegistration`,donorData);
     return res.data;
 }
+
+export async function OrgRegister(orgData){
+  const res = await axios.post(`${API_URL}/register-org`,orgData)
+  return res.data;
+}

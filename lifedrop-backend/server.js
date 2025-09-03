@@ -8,9 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 
-
 //Post Blood Request API
-
 app.post("/api/bloodRequest", async (req, res) => {
   try {
     const {
@@ -126,4 +124,56 @@ app.post("/api/NewDonorRegistration",async(req,res)=>{
   }
 })
 
+
+// New Hospital Register API
+app.post("/api/register-org",async(req,res)=>{
+
+  try{
+    const{
+      uid,
+      hospitalName,
+      hospitalType,
+      address,
+      city,
+      state,
+      country,
+      pincode,
+      phone,
+      email,
+      website,
+      contactPerson,
+      verified
+    } = req.body;
+
+    if(!uid){
+       return res.status(400).json({ error: "User UID is required" });
+    }
+    const DocRef = doc(db,"hospitals",uid)
+    await setDoc(DocRef,{
+      hospitalName,
+      hospitalType,
+      address,
+      city,
+      state,
+      country,
+      pincode,
+      phone,
+      email,
+      website,
+      contactPerson,
+      verified
+    },{merge:true})
+    res.status(203).json({id:uid,message:"Hospital Succesfully Registered"})
+  }catch(err){
+     console.error("Error Hospital registration request:", err);
+     res.status(500).json({ error: err.message });
+  }
+})
+
 app.listen(5000, () => console.log("Server running on port 5000"));
+
+
+
+
+
+

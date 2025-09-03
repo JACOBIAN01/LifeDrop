@@ -1,15 +1,12 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
-import {
-  Building2,
-  Phone,
-  Mail,
-  MapPin,
-  Globe,
-  ShieldCheck,
-} from "lucide-react";
+import { Building2, Phone, MapPin, ShieldCheck } from "lucide-react";
+import { useCurrentUser } from "../services/AuthService";
+import Ask_to_Sign_In from "./BloodRequestPage";
+import { OrgRegister } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
-export default function HospitalRegistrationPage({ user }) {
+export default function HospitalRegistrationPage() {
   const [hospitalName, setHospitalName] = useState("");
   const [hospitalType, setHospitalType] = useState("Hospital");
   const [address, setAddress] = useState("");
@@ -22,10 +19,43 @@ export default function HospitalRegistrationPage({ user }) {
   const [website, setWebsite] = useState("");
   const [contactPerson, setContactPerson] = useState("");
   const [verified, setVerified] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const user = useCurrentUser();
+  if (user === null) {
+    return (
+      <>
+        <Ask_to_Sign_In />
+      </>
+    );
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Hospital Registered (UI Only)");
+    const orgData = {
+      uid:user.uid,
+      hospitalName,
+      hospitalType,
+      address,
+      city,
+      state,
+      country,
+      pincode,
+      phone,
+      email,
+      website,
+      contactPerson,
+      verified,
+    };
+    
+    try {
+      await OrgRegister(orgData);
+      navigate("/hdash");
+      alert("Your Org SUccessfully Registered!");
+    } catch (err) {
+      console.error("Error adding document: ", err);
+      alert(err);
+    }
   };
 
   return (

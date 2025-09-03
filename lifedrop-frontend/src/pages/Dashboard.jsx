@@ -9,8 +9,16 @@ export default function Dashboard() {
   const user = useCurrentUser();
   const { isDonor, donorData } = useDonorStatus();
 
-  if (isDonor === undefined) return <Loading message="Checking Dashboard..." />;
-  if (isDonor && !donorData) return <Loading message="Loading Donor Data..." />;
+  if(!user){
+    return(
+      <>
+        Please Sign In
+      </>
+    )
+  }
+
+  if (user && isDonor === undefined) return <Loading message="Checking Dashboard..." />;
+  if (user&& isDonor && !donorData) return <Loading message="Loading Donor Data..." />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100">

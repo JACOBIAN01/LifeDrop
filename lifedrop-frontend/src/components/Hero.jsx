@@ -60,7 +60,7 @@ export default function Hero() {
 
           {/* Button */}
           <button
-            onClick={() => navigate("/hreg")}
+            onClick={() => navigate("/register-org")}
             className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl text-lg font-semibold shadow-sm hover:shadow-md transition-all duration-200"
           >
             Register Your Organization

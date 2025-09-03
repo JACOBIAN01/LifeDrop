@@ -43,7 +43,6 @@ export function useDonorStatus() {
 export default function BecomeDonorPage() {
   const user = useCurrentUser();
   const navigate = useNavigate();
-
   const { isDonor } = useDonorStatus();
 
   useEffect(() => {
@@ -52,12 +51,13 @@ export default function BecomeDonorPage() {
     }
   }, [isDonor, navigate]);
 
-  if (isDonor === undefined) {
-    return <div className="text-center mt-10">Checking donor status...</div>;
-  }
 
   if (user === null) {
     return <Ask_to_Sign_In />;
+  }
+
+  if (user!=null && isDonor === undefined) {
+    return <div className="text-center mt-10">Checking donor status...</div>;
   }
 
   if (!isDonor && user != null) {
