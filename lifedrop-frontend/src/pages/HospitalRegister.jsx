@@ -51,29 +51,36 @@ export default function HospitalRegistrationPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const orgData = {
-      hospitalName,
-      hospitalType,
-      address,
-      city,
-      state,
-      country,
-      pincode,
-      phone,
-      email,
-      website,
-      contactPerson,
-      userType: "org",
-      verified,
-    };
+   
 
     try {
       if (passwordMatch) {
+        alert("Password did not Matched")
+        return
+      }
+
+       const user = await register(hospitalName, "org", email, password);
+
+        const orgData = {
+          uid:user.uid,
+          hospitalName,
+          hospitalType,
+          address,
+          city,
+          state,
+          country,
+          pincode,
+          phone,
+          email,
+          website,
+          contactPerson,
+          userType: "org",
+          verified,
+        };
         await OrgRegister(orgData);
-        await register(hospitalName,email,password);
         navigate("/hdash");
         alert("Your Org SUccessfully Registered!");
-      }
+        
     } catch (err) {
       console.error("Error adding document: ", err);
       alert(err);

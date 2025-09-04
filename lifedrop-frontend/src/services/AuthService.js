@@ -26,7 +26,7 @@ export const useCurrentUser = () => {
 
 
 //Sign Up
-export const register = async (name, email, password) => {
+export const register = async (name,userType="user", email, password) => {
   try {
     // Create user
     const userCredential = await createUserWithEmailAndPassword(
@@ -37,15 +37,15 @@ export const register = async (name, email, password) => {
     const user = userCredential.user;
 
     // Update profile
-    await updateProfile(user, { displayName: name,});
+    await updateProfile(user, { displayName: name, userType:userType});
 
     // Save to Firestore
     await setDoc(doc(db, "users", user.uid), {
       name,
+      userType,
       email,
       createdAt: new Date(),
     });
-
     return user;
   } catch (error) {
     console.error("Error registering user:", error);
