@@ -130,7 +130,6 @@ app.post("/api/register-org",async(req,res)=>{
 
   try{
     const{
-      uid,
       hospitalName,
       hospitalType,
       address,
@@ -142,6 +141,7 @@ app.post("/api/register-org",async(req,res)=>{
       email,
       website,
       contactPerson,
+      userType,
       verified
     } = req.body;
 
@@ -161,6 +161,7 @@ app.post("/api/register-org",async(req,res)=>{
       email,
       website,
       contactPerson,
+      userType,
       verified
     },{merge:true})
     res.status(203).json({id:uid,message:"Hospital Succesfully Registered"})
