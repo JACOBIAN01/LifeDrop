@@ -7,12 +7,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
 //Post Blood Request API
 app.post("/api/bloodRequest", async (req, res) => {
   try {
     const {
-      uid, 
+      uid,
       name,
       email,
       bloodGroupNeeded,
@@ -33,21 +32,25 @@ app.post("/api/bloodRequest", async (req, res) => {
 
     const docRef = doc(db, "requests", uid);
 
-    await setDoc(docRef, {
-      name,
-      email,
-      bloodGroupNeeded,
-      hospitalName,
-      hospitalAddress,
-      city,
-      state,
-      country,
-      neededBy: neededBy ? new Date(neededBy) : null,
-      patientCondition,
-      phoneNumber,
-      status,
-      requestedAt: serverTimestamp(),
-    },{merge:true});
+    await setDoc(
+      docRef,
+      {
+        name,
+        email,
+        bloodGroupNeeded,
+        hospitalName,
+        hospitalAddress,
+        city,
+        state,
+        country,
+        neededBy: neededBy ? new Date(neededBy) : null,
+        patientCondition,
+        phoneNumber,
+        status,
+        requestedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
 
     res.status(201).json({
       id: uid,
@@ -59,10 +62,9 @@ app.post("/api/bloodRequest", async (req, res) => {
   }
 });
 
-
 // Become a Donor API
-app.post("/api/NewDonorRegistration",async(req,res)=>{
-  try{
+app.post("/api/NewDonorRegistration", async (req, res) => {
+  try {
     const {
       uid,
       name,
@@ -83,12 +85,26 @@ app.post("/api/NewDonorRegistration",async(req,res)=>{
       userType,
     } = req.body;
 
-     if (!uid) {
-       return res.status(400).json({ error: "User UID is required" });
-     }
+    if (!uid) {
+      return res.status(400).json({ error: "User UID is required" });
+    }
 
-     const docRef = doc(db, "donors", uid);
+    ///Update Users Collection Update Users Collection: Change userType = "donor"
+    const userRef = doc(db, "users", uid);
+    await setDoc(
+      userRef,
+      {
+        userType: "donor", // update role
+        phone,
+        gender,
+        bloodType,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
 
+    const docRef = doc(db, "donors", uid);
+    //Update Donor Collection
     await setDoc(
       docRef,
       {
@@ -113,23 +129,21 @@ app.post("/api/NewDonorRegistration",async(req,res)=>{
       { merge: true }
     );
 
-      res.status(201).json({
-        id: uid,
-        message: "Donor Successfully Registered",
-      });
-
-  }catch(err){
+    res.status(201).json({
+      id: uid,
+      message: "Donor Successfully Registered",
+    });
+  } catch (err) {
     console.error("Error donor registration request:", err);
     res.status(500).json({ error: err.message });
   }
-})
-
+});
 
 // New Hospital Register API
-app.post("/api/register-org",async(req,res)=>{
-
-  try{
-    const{
+app.post("/api/register-org", async (req, res) => {
+  try {
+    const {
+      uid,
       hospitalName,
       hospitalType,
       address,
@@ -141,40 +155,54 @@ app.post("/api/register-org",async(req,res)=>{
       email,
       website,
       contactPerson,
-      userType,
-      verified
+      verified,
     } = req.body;
 
-    if(!uid){
-       return res.status(400).json({ error: "User UID is required" });
+    if (!uid) {
+      return res.status(400).json({ error: "User UID is required" });
     }
-    const DocRef = doc(db,"hospitals",uid)
-    await setDoc(DocRef,{
-      hospitalName,
-      hospitalType,
-      address,
-      city,
-      state,
-      country,
-      pincode,
-      phone,
-      email,
-      website,
-      contactPerson,
-      userType,
-      verified
-    },{merge:true})
-    res.status(203).json({id:uid,message:"Hospital Succesfully Registered"})
-  }catch(err){
-     console.error("Error Hospital registration request:", err);
-     res.status(500).json({ error: err.message });
+
+    //Update User role from user to Org
+    const userRef = doc(db, "users", uid);
+    await setDoc(
+      userRef,
+      {
+        userType: "org",
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+
+    //Update organization Data
+    const orgRef = doc(db, "organizations", uid);
+    await setDoc(
+      orgRef,
+      {
+        hospitalName,
+        hospitalType,
+        address,
+        city,
+        state,
+        country,
+        pincode,
+        phone,
+        email,
+        website,
+        contactPerson,
+        verified,
+        createdAt: serverTimestamp(),
+        userType: "org",
+      },
+      { merge: true }
+    );
+
+    res
+      .status(203)
+      .json({ id: uid, message: "Hospital Succesfully Registered" });
+  } catch (err) {
+    console.error("Error Hospital registration request:", err);
+    res.status(500).json({ error: err.message });
   }
-})
+});
 
 app.listen(5000, () => console.log("Server running on port 5000"));
-
-
-
-
-
-
