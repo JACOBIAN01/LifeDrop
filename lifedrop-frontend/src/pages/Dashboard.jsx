@@ -3,16 +3,23 @@ import { useCurrentUser } from "../services/AuthService";
 import {useDonorStatus} from "./BecomeDonorPage";
 import DonorDashboard from "./DonorDashboard";
 import NonDonorDashboard from "./NonDonorDashboard";
+import Ask_to_Sign_In from "./BloodRequestPage";
+// import { useState } from "react";
 
 
 export default function Dashboard() {
   const user = useCurrentUser();
+  // const [userType , setUserType] = useState();
   const { isDonor, donorData } = useDonorStatus();
+
+  // if(isDonor){
+  //   setUserType("donor")
+  // }
 
   if(!user){
     return(
       <>
-        Please Sign In
+        <Ask_to_Sign_In/>
       </>
     )
   }

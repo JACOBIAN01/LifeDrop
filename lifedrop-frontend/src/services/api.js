@@ -7,7 +7,6 @@ export async function PostBloodRequest(requestData){
   return res.data;
 }
 
-
 export async function DonorRegistration(donorData){
   const res = await axios.post(`${API_URL}/NewDonorRegistration`,donorData);
     return res.data;

@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import { Building2, Phone, MapPin, ShieldCheck } from "lucide-react";
-import { useCurrentUser } from "../services/AuthService";
-import Ask_to_Sign_In from "./BloodRequestPage";
+import { Building2, Phone, MapPin, ShieldCheck ,Lock} from "lucide-react";
+// import Ask_to_Sign_In from "./BloodRequestPage";
 import { OrgRegister } from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { register } from "../services/AuthService.js";
 
 export default function HospitalRegistrationPage() {
   const [hospitalName, setHospitalName] = useState("");
@@ -19,21 +19,39 @@ export default function HospitalRegistrationPage() {
   const [website, setWebsite] = useState("");
   const [contactPerson, setContactPerson] = useState("");
   const [verified, setVerified] = useState(false);
-  const navigate = useNavigate();
+  const [password, setPassword] = useState(null);
+  const [Confirmpassword, setConfirmPassword] = useState(null);
+  const [passwordMatch, setPasswordMatch] = useState(undefined);
 
-  const user = useCurrentUser();
-  if (user === null) {
-    return (
-      <>
-        <Ask_to_Sign_In />
-      </>
-    );
-  }
+  useEffect(() => {
+    const handlePasswordMatch = () => {
+      if (password == null || Confirmpassword == null) {
+        setPasswordMatch(undefined);
+      }
+      if (
+        password != null &&
+        Confirmpassword != null &&
+        password === Confirmpassword
+      ) {
+        setPasswordMatch(true);
+      }
+      if (
+        password != null &&
+        Confirmpassword != null &&
+        password != Confirmpassword
+      ) {
+        setPasswordMatch(false);
+      }
+    };
+
+    handlePasswordMatch();
+  }, [password, Confirmpassword]);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const orgData = {
-      uid:user.uid,
       hospitalName,
       hospitalType,
       address,
@@ -45,13 +63,17 @@ export default function HospitalRegistrationPage() {
       email,
       website,
       contactPerson,
+      userType: "org",
       verified,
     };
-    
+
     try {
-      await OrgRegister(orgData);
-      navigate("/hdash");
-      alert("Your Org SUccessfully Registered!");
+      if (passwordMatch) {
+        await OrgRegister(orgData);
+        await register(hospitalName,email,password);
+        navigate("/hdash");
+        alert("Your Org SUccessfully Registered!");
+      }
     } catch (err) {
       console.error("Error adding document: ", err);
       alert(err);
@@ -60,7 +82,7 @@ export default function HospitalRegistrationPage() {
 
   return (
     <>
-      <Navbar user={user} />
+      <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-rose-50 to-red-50 py-10 px-4">
         <div className="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-8">
           <h2 className="text-3xl font-bold text-center text-rose-600 mb-8">
@@ -197,6 +219,43 @@ export default function HospitalRegistrationPage() {
                 />
                 <span>Verified Hospital</span>
               </label>
+            </div>
+
+            {/*Password*/}
+            <h3 className="text-xl font-semibold text-rose-500 flex items-center gap-2 mb-4">
+              <Lock className="h-5 w-4" />Enter Password
+            </h3>
+            <input
+              type="password"
+              placeholder="Enter Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="mt-2 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-300"
+            />
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={Confirmpassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className="mt-2 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-300"
+            />
+
+            <div>
+              {passwordMatch == undefined ? (
+                ""
+              ) : (
+                <>
+                  {passwordMatch ? (
+                    <label className="text-green-700">Password Matched</label>
+                  ) : (
+                    <label className="text-red-700">
+                      Password Did not Matched
+                    </label>
+                  )}
+                </>
+              )}
             </div>
 
             {/* Submit */}

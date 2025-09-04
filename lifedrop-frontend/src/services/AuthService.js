@@ -37,7 +37,7 @@ export const register = async (name, email, password) => {
     const user = userCredential.user;
 
     // Update profile
-    await updateProfile(user, { displayName: name });
+    await updateProfile(user, { displayName: name,});
 
     // Save to Firestore
     await setDoc(doc(db, "users", user.uid), {
