@@ -1,29 +1,53 @@
-import Navbar from "../components/Navbar";
+import { useState, useEffect } from "react";
 import { useCurrentUser } from "../services/AuthService";
 import { useDonorStatus } from "../Hooks/DonorStatus";
+import { useCurrentUserDetails } from "../services/AuthService";
+import { useOrgDetails } from "../Hooks/OrgHooks";
 import DonorDashboard from "../Dashboards/DonorDashboard";
 import NonDonorDashboard from "../Dashboards/NonDonorDashboard";
+import OrgDashboard from "../Dashboards/HospitalDashboard";
 import Ask_to_Sign_In from "../components/Ask_to_Sign_In";
-
+import Navbar from "../components/Navbar";
 
 
 export default function Dashboard() {
   const user = useCurrentUser();
-  // const [userType , setUserType] = useState();
   const { isDonor, donorData } = useDonorStatus();
+  const userDetails = useCurrentUserDetails();
+  const orgDetails = useOrgDetails();
 
-  // if(isDonor){
-  //   setUserType("donor")
-  // }
+  const [NonDonor, SetNonDonor] = useState(false);
+  const [Donor, SetDonor] = useState(false);
+  const [Org, SetOrg] = useState(false);
+  const [Data, SetData] = useState(null);
+
+  // run only when userDetails changes
+  useEffect(() => {
+    if (!userDetails) return;
+
+    if (userDetails.userType === "donor") {
+      SetDonor(true);
+      SetNonDonor(false);
+      SetOrg(false);
+      SetData(donorData); // from useDonorStatus()
+    } else if (userDetails.userType === "user") {
+      SetNonDonor(true);
+      SetDonor(false);
+      SetOrg(false);
+      SetData(null); // or some other logic
+    } else if (userDetails.userType === "org") {
+      SetOrg(true);
+      SetDonor(false);
+      SetNonDonor(false);
+      SetData(orgDetails); // from useOrgDetails()
+    }
+  }, [userDetails, donorData, orgDetails]);
 
   if (!user) {
-    return (
-      <>
-        <Ask_to_Sign_In />
-      </>
-    );
+    return <Ask_to_Sign_In />;
   }
 
+  if (!userDetails) return <Loading message="Loading Data..." />;
   if (user && isDonor === undefined)
     return <Loading message="Checking Dashboard..." />;
   if (user && isDonor && !donorData)
@@ -36,16 +60,15 @@ export default function Dashboard() {
         <h1 className="text-2xl md:text-3xl font-bold text-red-800 text-center">
           Welcome to the Dashboard {user ? user.displayName || "User" : "User"}
         </h1>
-
-        {isDonor ? (
-          <DonorDashboard donorData={donorData} />
-        ) : (
-          <NonDonorDashboard />
-        )}
+        {Donor && <DonorDashboard donorData={Data} />}
+        {NonDonor && <NonDonorDashboard />}
+        {Org && <OrgDashboard orgData={Data} />}
       </div>
     </div>
   );
 }
+
+
 
 function Loading({ message }) {
   return (

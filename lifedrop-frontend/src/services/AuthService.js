@@ -6,9 +6,8 @@ import {
   updateProfile,
   onAuthStateChanged,
 } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc,getDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
-
 
 //Get Current User
 export const useCurrentUser = () => {
@@ -24,9 +23,36 @@ export const useCurrentUser = () => {
   return user;
 };
 
+//Get Current User Details
+export const useCurrentUserDetails = () => {
+  const [userDetails, setUserDetails] = useState(null);
+  const user = useCurrentUser();
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+    const getDetails = async () => {
+      try {
+        const userDoc = doc(db,"users",user.uid)
+        const userSnap = await getDoc(userDoc)
+        if (!userSnap.exists()) {
+          console.log("No such user!");
+          setUserDetails(null);
+        } else {
+          setUserDetails(userSnap.data()); 
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getDetails();
+  }, [user]);
+  return userDetails;
+};
 
 //Sign Up
-export const register = async (name,userType="user", email, password) => {
+export const register = async (name, userType = "user", email, password) => {
   try {
     // Create user
     const userCredential = await createUserWithEmailAndPassword(
@@ -37,7 +63,7 @@ export const register = async (name,userType="user", email, password) => {
     const user = userCredential.user;
 
     // Update profile
-    await updateProfile(user, { displayName: name, userType:userType});
+    await updateProfile(user, { displayName: name, userType: userType });
 
     // Save to Firestore
     await setDoc(doc(db, "users", user.uid), {
@@ -52,7 +78,6 @@ export const register = async (name,userType="user", email, password) => {
     throw error;
   }
 };
-
 
 //LogIN
 export const login = async (email, password) => {

@@ -53,7 +53,7 @@ export default function HospitalRegistrationPage() {
    
 
     try {
-      if (passwordMatch) {
+      if (!passwordMatch) {
         alert("Password did not Matched")
         return
       }

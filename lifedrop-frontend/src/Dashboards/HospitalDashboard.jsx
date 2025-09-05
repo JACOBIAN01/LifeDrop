@@ -1,34 +1,20 @@
 /* eslint-disable no-irregular-whitespace */
 import { useNavigate } from "react-router-dom";
-// Lucide Icons
 import { Building2, Heart, Home, ShieldCheck, MapPin } from "lucide-react";
-import Navbar from "../components/Navbar";
-
-
+import Quote from "../assets/Quotes";
 
 export default function OrgDashboard({ orgData }) {
   const navigate = useNavigate(); 
 
-  const quotes = [
-    "Saving lives is a noble cause. Thank you for your service.",
-    "Your organization is a beacon of hope for many.",
-    "Connecting donors and recipients, one pint at a time.",
-  ];
-  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-
   return (
     <>
-      <Navbar />
       <div className="bg-rose-50 min-h-screen py-12">
         <div className="max-w-4xl mx-auto px-4 space-y-8">
            {/* Motivational Quote Card */}
-          <div className="bg-red-100 border border-red-200 rounded-2xl shadow-sm p-4 text-center">
-            <p className="italic text-red-800 text-lg font-medium">
-                          “{randomQuote}”
-            </p>
-          </div>
+          <Quote/>
+
            {/* Profile Card */}
-          <div className="bg-gradient-to-r from-red-600 to-red-500 text-white rounded-3xl shadow-xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white rounded-3xl shadow-xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-6">
                        
               <div className="bg-white rounded-full w-24 h-24 flex items-center justify-center">
@@ -70,6 +56,7 @@ export default function OrgDashboard({ orgData }) {
                  
             </div>
           </div>
+
 
                   {/* Organization Details Card */}     
           <div className="bg-white rounded-2xl shadow-md p-8">
