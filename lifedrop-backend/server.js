@@ -1,14 +1,13 @@
 import express from "express";
 import cors from "cors";
-import { db } from "./firebase.js";
+import { db ,serverTimestamp } from "./Firebase.js";
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
-
-
 
 
 
@@ -50,7 +49,7 @@ app.post("/api/bloodRequest", async (req, res) => {
         patientCondition,
         phoneNumber,
         status,
-        requestedAt: admin.firestore.FieldValue.serverTimestamp(),
+        requestedAt:serverTimestamp(),
       },
       { merge: true }
     );
@@ -97,7 +96,7 @@ app.post("/api/NewDonorRegistration", async (req, res) => {
         phone,
         gender,
         bloodType,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt:serverTimestamp(),
       },
       { merge: true }
     );
@@ -123,7 +122,7 @@ app.post("/api/NewDonorRegistration", async (req, res) => {
           donationCount,
           available,
           fcmToken,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          createdAt:serverTimestamp(),
           userType: "donor",
         },
         { merge: true }
@@ -166,7 +165,7 @@ app.post("/api/register-org", async (req, res) => {
       .set(
         {
           userType: "org",
-          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: serverTimestamp(),
         },
         { merge: true }
       );
@@ -186,7 +185,7 @@ app.post("/api/register-org", async (req, res) => {
         website,
         contactPerson,
         verified,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt:serverTimestamp(),
         userType: "org",
       },
       { merge: true }
