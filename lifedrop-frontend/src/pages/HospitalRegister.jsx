@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { Building2, Phone, MapPin, ShieldCheck ,Lock} from "lucide-react";
-// import Ask_to_Sign_In from "./BloodRequestPage";
 import { OrgRegister } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { register } from "../services/AuthService.js";

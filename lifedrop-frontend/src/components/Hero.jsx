@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { useDonorStatus } from "../pages/BecomeDonorPage";
+import { useDonorStatus } from "../Hooks/DonorStatus";
 
 export default function Hero() {
   const navigate = useNavigate();
-  const { isDonor } = useDonorStatus();
+  const { isDonor,_ } = useDonorStatus();
 
   return (
     <section className="relative w-full h-screen overflow-hidden">

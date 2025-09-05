@@ -1,44 +1,11 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import { db } from "../services/firebase";
-import { doc, getDoc } from "firebase/firestore";
-import Ask_to_Sign_In from "./BloodRequestPage";
+import Ask_to_Sign_In from "../components/Ask_to_Sign_In";
 import { useCurrentUser } from "../services/AuthService";
 import { useNavigate } from "react-router-dom";
 import { DonorRegistration } from "../services/api";
+import { useDonorStatus } from "../Hooks/DonorStatus";
 
-// eslint-disable-next-line react-refresh/only-export-components
-export function useDonorStatus() {
-  const user = useCurrentUser();
-  const [isDonor, setIsDonor] = useState(undefined);
-  const [donorData, setDonorData] = useState(null);
-
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchDonorData = async () => {
-      try {
-        const donorRef = doc(db, "donors", user.uid);
-        const donorSnap = await getDoc(donorRef);
-        if (donorSnap.exists()) {
-          setIsDonor(true);
-          setDonorData(donorSnap.data());
-        } else {
-          setIsDonor(false);
-          setDonorData(null);
-        }
-      } catch (err) {
-        console.error("Error fetching donor data:", err);
-        setIsDonor(false);
-        setDonorData(null);
-      }
-    };
-
-    fetchDonorData();
-  }, [user]);
-
-  return { isDonor, donorData };
-}
 
 export default function BecomeDonorPage() {
   const user = useCurrentUser();
@@ -114,7 +81,7 @@ const DonorForm = ({ user }) => {
       alert("Thank you for becoming a donor! Your information has been saved.");
       navigate("/dashboard");
     } catch (err) {
-      console.error("Error adding donor: ", err);
+      console.error(`Error adding donor: ${err}`);
       alert("Failed to submit. Please try again.");
     }
   };

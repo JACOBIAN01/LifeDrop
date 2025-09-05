@@ -3,7 +3,6 @@ import Navbar from "../components/Navbar";
 import { register, useCurrentUser } from "../services/AuthService";
 import { login } from "../services/AuthService";
 import MessageBox from "../components/Alert";
-import Dashboard from "./Dashboard";
 import {useNavigate } from "react-router-dom";
 
 
@@ -78,7 +77,7 @@ function SignUpForm() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await register(name, email, password);
+      await register(name, "user", email, password);
       alert("User Registered Successfully!");
     } catch (err) {
       alert(err);

@@ -3,9 +3,9 @@ import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import BecomeDonorPage from "./pages/BecomeDonorPage";
 import RequestUserCheck from "./pages/BloodRequestPage";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./Dashboards/Dashboard";
 import HospitalRegistrationPage from "./pages/HospitalRegister";
-import HospitalDashboard from "./pages/HospitalDashboard";
+import HospitalDashboard from "./Dashboards/HospitalDashboard";
 
 export default function App() {
   return (
