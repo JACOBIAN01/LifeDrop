@@ -1,13 +1,19 @@
 import express from "express";
 import cors from "cors";
-import { db } from "../lifedrop-frontend/src/services/firebase.js";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "./firebase.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-//Post Blood Request API
+const PORT = process.env.PORT || 5000;
+
+
+
+
+
+// Post Blood Request API
+
 app.post("/api/bloodRequest", async (req, res) => {
   try {
     const {
@@ -26,14 +32,11 @@ app.post("/api/bloodRequest", async (req, res) => {
       status,
     } = req.body;
 
-    if (!uid) {
-      return res.status(400).json({ error: "User UID is required" });
-    }
+    if (!uid) return res.status(400).json({ error: "User UID is required" });
 
-    const docRef = doc(db, "requests", uid);
+    const docRef = db.collection("requests").doc(uid);
 
-    await setDoc(
-      docRef,
+    await docRef.set(
       {
         name,
         email,
@@ -47,22 +50,23 @@ app.post("/api/bloodRequest", async (req, res) => {
         patientCondition,
         phoneNumber,
         status,
-        requestedAt: serverTimestamp(),
+        requestedAt: admin.firestore.FieldValue.serverTimestamp(),
       },
       { merge: true }
     );
 
-    res.status(201).json({
-      id: uid,
-      message: "Request created/updated successfully",
-    });
+    res
+      .status(201)
+      .json({ id: uid, message: "Request created/updated successfully" });
   } catch (err) {
     console.error("Error creating request:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// Become a Donor API
+
+// Donor Registration API
+
 app.post("/api/NewDonorRegistration", async (req, res) => {
   try {
     const {
@@ -82,64 +86,59 @@ app.post("/api/NewDonorRegistration", async (req, res) => {
       donationCount,
       available,
       fcmToken,
-      userType,
     } = req.body;
 
-    if (!uid) {
-      return res.status(400).json({ error: "User UID is required" });
-    }
+    if (!uid) return res.status(400).json({ error: "User UID is required" });
 
-    ///Update Users Collection Update Users Collection: Change userType = "donor"
-    const userRef = doc(db, "users", uid);
-    await setDoc(
-      userRef,
+    // Update Users collection
+    await db.collection("users").doc(uid).set(
       {
-        userType: "donor", // update role
+        userType: "donor",
         phone,
         gender,
         bloodType,
-        updatedAt: serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       },
       { merge: true }
     );
 
-    const docRef = doc(db, "donors", uid);
-    //Update Donor Collection
-    await setDoc(
-      docRef,
-      {
-        name,
-        email,
-        phone,
-        gender,
-        dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
-        bloodType,
-        address,
-        city,
-        state,
-        country,
-        pincode,
-        lastDonation: lastDonation ? new Date(lastDonation) : null,
-        donationCount,
-        available,
-        fcmToken,
-        createdAt: serverTimestamp(),
-        userType,
-      },
-      { merge: true }
-    );
+    // Update Donors collection
+    await db
+      .collection("donors")
+      .doc(uid)
+      .set(
+        {
+          name,
+          email,
+          phone,
+          gender,
+          dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
+          bloodType,
+          address,
+          city,
+          state,
+          country,
+          pincode,
+          lastDonation: lastDonation ? new Date(lastDonation) : null,
+          donationCount,
+          available,
+          fcmToken,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          userType: "donor",
+        },
+        { merge: true }
+      );
 
-    res.status(201).json({
-      id: uid,
-      message: "Donor Successfully Registered",
-    });
+    res.status(201).json({ id: uid, message: "Donor Successfully Registered" });
   } catch (err) {
     console.error("Error donor registration request:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// New Hospital Register API
+
+// Hospital Registration API
+
 app.post("/api/register-org", async (req, res) => {
   try {
     const {
@@ -158,25 +157,22 @@ app.post("/api/register-org", async (req, res) => {
       verified,
     } = req.body;
 
-    if (!uid) {
-      return res.status(400).json({ error: "User UID is required" });
-    }
+    if (!uid) return res.status(400).json({ error: "User UID is required" });
 
-    //Update User role from user to Org
-    const userRef = doc(db, "users", uid);
-    await setDoc(
-      userRef,
-      {
-        userType: "org",
-        updatedAt: serverTimestamp(),
-      },
-      { merge: true }
-    );
+    // Update Users collection role
+    await db
+      .collection("users")
+      .doc(uid)
+      .set(
+        {
+          userType: "org",
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      );
 
-    //Update organization Data
-    const orgRef = doc(db, "organizations", uid);
-    await setDoc(
-      orgRef,
+    // Update Organizations collection
+    await db.collection("organizations").doc(uid).set(
       {
         hospitalName,
         hospitalType,
@@ -190,19 +186,22 @@ app.post("/api/register-org", async (req, res) => {
         website,
         contactPerson,
         verified,
-        createdAt: serverTimestamp(),
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
         userType: "org",
       },
       { merge: true }
     );
 
     res
-      .status(203)
-      .json({ id: uid, message: "Hospital Succesfully Registered" });
+      .status(201)
+      .json({ id: uid, message: "Hospital Successfully Registered" });
   } catch (err) {
     console.error("Error Hospital registration request:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+
+// Start Server
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
