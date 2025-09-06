@@ -2,11 +2,12 @@ import { useAllRequests } from "../Hooks/ManageRequest";
 import {getDoc, doc, updateDoc } from "firebase/firestore";
 import { useCurrentUser } from "../services/AuthService";
 import { db } from "../services/firebase";
+import useDonorStatus from "../Hooks/DonorStatus"
 
-
-export default function AllBloodRequest({ DonorData }) {
+export default function AllBloodRequest() {
   const { requests, loading, error } = useAllRequests();
   const user = useCurrentUser();
+  const { _, DonorData } = useDonorStatus();
 
   const handleInterest = async (reqId) => {
     const requestRef = doc(db, "requests", reqId);

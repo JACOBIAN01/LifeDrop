@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { User, Heart, Home, Users, PlusCircle } from "lucide-react";
 import { useState } from "react";
-import { AllBloodRequest} from "../components/AllBloodRequest";
-import { MyBloodRequest } from "../components/MyBloodRequest";
+import AllBloodRequest from "../components/AllBloodRequest";
+import MyBloodRequest from "../components/MyBloodRequest";
 
 
 export default function NonDonorDashboard() {

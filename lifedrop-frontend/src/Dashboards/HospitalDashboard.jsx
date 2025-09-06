@@ -2,8 +2,8 @@
 import { useNavigate } from "react-router-dom";
 import { Building2, Heart, Home, ShieldCheck, MapPin } from "lucide-react";
 import Quote from "../assets/Quotes";
-import MyBloodRequest from "../components/MyBloodRequest"
 import AllBloodRequest from "../components/AllBloodRequest";
+import MyBloodRequest from "../components/MyBloodRequest";
 
 
 
@@ -102,7 +102,7 @@ export default function OrgDashboard({ orgData }) {
 
           {/* Blood Requests */}
           <MyBloodRequest/>
-          <AllBloodRequest/>
+          <AllBloodRequest donorData={null}/>
 
 
 

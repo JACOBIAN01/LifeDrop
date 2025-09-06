@@ -4,7 +4,7 @@ import { db } from "../services/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 
-export function useDonorStatus() {
+export default function useDonorStatus() {
   const user = useCurrentUser();
   const [isDonor, setIsDonor] = useState(undefined);
   const [donorData, setDonorData] = useState(null);

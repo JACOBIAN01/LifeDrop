@@ -1,10 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { MyBloodRequest } from "../components/MyBloodRequest";
-import { AllBloodRequest } from "../components/AllBloodRequest";
 import { MatchedBloodRequest } from "../components/MatchedBloodRequest";
 import { User, Heart, Home, Users, Activity } from "lucide-react";
-
+import AllBloodRequest from "../components/AllBloodRequest";
+import MyBloodRequest from "../components/MyBloodRequest";
 
 export default function DonorDashboard({ donorData }) {
   const navigate = useNavigate();
