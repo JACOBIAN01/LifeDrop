@@ -2,6 +2,10 @@
 import { useNavigate } from "react-router-dom";
 import { Building2, Heart, Home, ShieldCheck, MapPin } from "lucide-react";
 import Quote from "../assets/Quotes";
+import MyBloodRequest from "../components/MyBloodRequest"
+import AllBloodRequest from "../components/AllBloodRequest";
+
+
 
 export default function OrgDashboard({ orgData }) {
   const navigate = useNavigate(); 
@@ -92,10 +96,14 @@ export default function OrgDashboard({ orgData }) {
                 <span className="font-medium text-red-800">Address:</span>{" "}
                 {orgData?.address || "N/A"}
               </p>
-                       
-            </div>
-                 
+                                  
+            </div>       
           </div>
+
+          {/* Blood Requests */}
+          <MyBloodRequest/>
+          <AllBloodRequest/>
+
 
 
            {/* Action Buttons */}     
@@ -105,14 +113,14 @@ export default function OrgDashboard({ orgData }) {
               onClick={() => navigate("/request")}
               className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition flex items-center justify-center gap-2"
             >
-                        <Heart size={20} /> Create a Request      
+            <Heart size={20} /> Create a Request      
             </button>
                  
             <button
               onClick={() => navigate("/")}
               className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-8 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition flex items-center justify-center gap-2"
             >
-                        <Home size={20} /> Home        
+            <Home size={20} /> Home        
             </button>  
           </div>
              

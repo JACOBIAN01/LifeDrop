@@ -26,7 +26,9 @@ export default function BloodRequestPage() {
   const [neededBy, setNeededBy] = useState("");
   const [patientCondition, setPatientCondition] = useState("Normal");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState();
+
+
 
   if (user === null) return <Ask_to_Sign_In />;
 
@@ -49,7 +51,7 @@ export default function BloodRequestPage() {
       neededBy,
       patientCondition,
       phoneNumber,
-      status,
+      status:"Pending",
     };
 
     try {

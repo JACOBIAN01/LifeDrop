@@ -1,7 +1,7 @@
 import { useRequest} from "../Hooks/ManageRequest";
 import { useState } from "react";
 
-export function MyBloodRequest() {
+export default function MyBloodRequest() {
   const { requestData, loading, error } = useRequest();
   const [showResponse, setShowResponse] = useState(true);
 
