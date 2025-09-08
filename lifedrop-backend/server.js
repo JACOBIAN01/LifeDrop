@@ -2,11 +2,12 @@ import express from "express";
 import cors from "cors";
 import { db, serverTimestamp } from "./Firebase.js";
 
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
 // Post Blood Request API
 
@@ -192,7 +193,7 @@ app.post("/api/register-org", async (req, res) => {
 });
 
 //Delete Blood Request API
-app.post("/delete-request/:uid", async (req, res) => {
+app.post("/api/delete-request/:uid", async (req, res) => {
   try {
     const { uid } = req.body;
 
@@ -214,7 +215,24 @@ app.post("/delete-request/:uid", async (req, res) => {
   }
 });
 
+// Update Request Status
+app.post("/api/update-status", async (req, res) => {
+  try {
+    const { id, status } = req.body;
+
+    if (!id || !status) {
+      return res.status(400).json({ error: "Missing id or status" });
+    }
+    await db.collection("requests").doc(id).set({status:status},{merge:true});
+    
+    return res.status(200).json({ message: "Status Updated Successfully" });
+  } catch (err) {
+    console.error("UPDATE ERROR:", err);
+    return res.status(400).json({ error: err.message });
+  }
+});
+
+
 
 // Start Server
-
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
