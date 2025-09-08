@@ -1,15 +1,12 @@
 import express from "express";
 import cors from "cors";
-import { db ,serverTimestamp } from "./Firebase.js";
-
+import { db, serverTimestamp } from "./Firebase.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
-
-
 
 // Post Blood Request API
 
@@ -49,7 +46,7 @@ app.post("/api/bloodRequest", async (req, res) => {
         patientCondition,
         phoneNumber,
         status,
-        requestedAt:serverTimestamp(),
+        requestedAt: serverTimestamp(),
       },
       { merge: true }
     );
@@ -62,7 +59,6 @@ app.post("/api/bloodRequest", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 // Donor Registration API
 
@@ -96,7 +92,7 @@ app.post("/api/NewDonorRegistration", async (req, res) => {
         phone,
         gender,
         bloodType,
-        updatedAt:serverTimestamp(),
+        updatedAt: serverTimestamp(),
       },
       { merge: true }
     );
@@ -122,7 +118,7 @@ app.post("/api/NewDonorRegistration", async (req, res) => {
           donationCount,
           available,
           fcmToken,
-          createdAt:serverTimestamp(),
+          createdAt: serverTimestamp(),
           userType: "donor",
         },
         { merge: true }
@@ -134,7 +130,6 @@ app.post("/api/NewDonorRegistration", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 // Hospital Registration API
 
@@ -159,16 +154,13 @@ app.post("/api/register-org", async (req, res) => {
     if (!uid) return res.status(400).json({ error: "User UID is required" });
 
     // Update Users collection role
-    await db
-      .collection("users")
-      .doc(uid)
-      .set(
-        {
-          userType: "org",
-          updatedAt: serverTimestamp(),
-        },
-        { merge: true }
-      );
+    await db.collection("users").doc(uid).set(
+      {
+        userType: "org",
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
 
     // Update Organizations collection
     await db.collection("organizations").doc(uid).set(
@@ -185,17 +177,39 @@ app.post("/api/register-org", async (req, res) => {
         website,
         contactPerson,
         verified,
-        createdAt:serverTimestamp(),
+        createdAt: serverTimestamp(),
         userType: "org",
       },
       { merge: true }
     );
-
     res
       .status(201)
       .json({ id: uid, message: "Hospital Successfully Registered" });
   } catch (err) {
     console.error("Error Hospital registration request:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+//Delete Blood Request API
+app.post("/delete-request/:uid", async (req, res) => {
+  try {
+    const { uid } = req.body;
+
+    if (!uid) return res.status(400).json({ err: "User UID is Required" });
+    const docRef = db.collection("requests").doc(uid);
+    const docSnap = await docRef.get();
+
+    if (!docSnap.exists) {
+      return res.status(404).json({ error: "Request Not Found" });
+    }
+
+    await docRef.delete();
+    res
+      .status(200)
+      .json({ message: `Blood request ${uid} deleted successfully` });
+  } catch (err) {
+    console.error("Error deleting request:", err);
     res.status(500).json({ error: err.message });
   }
 });
