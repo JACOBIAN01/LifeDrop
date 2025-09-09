@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import { db, serverTimestamp } from "./Firebase.js";
 
-
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -10,13 +9,12 @@ app.use(express.json());
 const PORT = 5000;
 
 // Post Blood Request API
-
 app.post("/api/bloodRequest", async (req, res) => {
   try {
     const {
       uid,
       name,
-      email,
+      email, // still store for display
       bloodGroupNeeded,
       hospitalName,
       hospitalAddress,
@@ -31,30 +29,28 @@ app.post("/api/bloodRequest", async (req, res) => {
 
     if (!uid) return res.status(400).json({ error: "User UID is required" });
 
-    const docRef = db.collection("requests").doc(uid);
+    // ✅ always create a new request document
+    const docRef = await db.collection("requests").add({
+      uid, // store UID
+      name,
+      email,
+      bloodGroupNeeded,
+      hospitalName,
+      hospitalAddress,
+      city,
+      state,
+      country,
+      neededBy: neededBy ? new Date(neededBy) : null,
+      patientCondition,
+      phoneNumber,
+      status: status || "Pending",
+      requestedAt: serverTimestamp(),
+    });
 
-    await docRef.set(
-      {
-        name,
-        email,
-        bloodGroupNeeded,
-        hospitalName,
-        hospitalAddress,
-        city,
-        state,
-        country,
-        neededBy: neededBy ? new Date(neededBy) : null,
-        patientCondition,
-        phoneNumber,
-        status,
-        requestedAt: serverTimestamp(),
-      },
-      { merge: true }
-    );
-
-    res
-      .status(201)
-      .json({ id: uid, message: "Request created/updated successfully" });
+    res.status(201).json({
+      id: docRef.id,
+      message: "Request created successfully",
+    });
   } catch (err) {
     console.error("Error creating request:", err);
     res.status(500).json({ error: err.message });
@@ -62,7 +58,6 @@ app.post("/api/bloodRequest", async (req, res) => {
 });
 
 // Donor Registration API
-
 app.post("/api/NewDonorRegistration", async (req, res) => {
   try {
     const {
@@ -192,39 +187,26 @@ app.post("/api/register-org", async (req, res) => {
   }
 });
 
-//Delete Blood Request API
-app.post("/api/delete-request/:uid", async (req, res) => {
-  try {
-    const { uid } = req.body;
 
-    if (!uid) return res.status(400).json({ err: "User UID is Required" });
-    const docRef = db.collection("requests").doc(uid);
-    const docSnap = await docRef.get();
-
-    if (!docSnap.exists) {
-      return res.status(404).json({ error: "Request Not Found" });
-    }
-
-    await docRef.delete();
-    res
-      .status(200)
-      .json({ message: `Blood request ${uid} deleted successfully` });
-  } catch (err) {
-    console.error("Error deleting request:", err);
-    res.status(500).json({ error: err.message });
-  }
+app.get("api/hello", async (req, res) => {
+  console.log("inside server");
+  res.json({ message: "Hello route working!" });
 });
+
 
 // Update Request Status
 app.post("/api/update-status", async (req, res) => {
   try {
     const { id, status } = req.body;
-
     if (!id || !status) {
       return res.status(400).json({ error: "Missing id or status" });
     }
-    await db.collection("requests").doc(id).set({status:status},{merge:true});
-    
+
+    await db
+      .collection("requests")
+      .doc(id)
+      .set({ status: status }, { merge: true });
+
     return res.status(200).json({ message: "Status Updated Successfully" });
   } catch (err) {
     console.error("UPDATE ERROR:", err);
