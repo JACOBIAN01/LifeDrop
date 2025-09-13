@@ -8,9 +8,11 @@ import NonDonorDashboard from "../Dashboards/NonDonorDashboard";
 import OrgDashboard from "../Dashboards/HospitalDashboard";
 import Ask_to_Sign_In from "../components/Ask_to_Sign_In";
 import Navbar from "../components/Navbar";
+import useBloodRequestListener from "../Hooks/useBloodRequestListener";
 
 export default function Dashboard() {
   const user = useCurrentUser();
+  useBloodRequestListener(donorData.bloodType);
   const { isDonor, donorData } = useDonorStatus();
   const userDetails = useCurrentUserDetails();
   const orgDetails = useOrgDetails();
@@ -46,7 +48,6 @@ export default function Dashboard() {
     return <Ask_to_Sign_In />;
   }
 
-  
   if (!userDetails) return <Loading message="Loading Data..." />;
   if (user && isDonor === undefined)
     return <Loading message="Checking Dashboard..." />;
@@ -57,15 +58,13 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100">
       <Navbar />
       <div className="mx-auto">
-        {Donor && <DonorDashboard donorData={Data}/>}
+        {Donor && <DonorDashboard donorData={Data} />}
         {NonDonor && <NonDonorDashboard user={user} />}
         {Org && <OrgDashboard orgData={Data} />}
       </div>
     </div>
   );
 }
-
-
 
 function Loading({ message }) {
   return (

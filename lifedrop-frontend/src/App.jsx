@@ -8,7 +8,9 @@ import HospitalRegistrationPage from "./pages/HospitalRegister";
 import HospitalDashboard from "./Dashboards/HospitalDashboard";
 import AdminDashboard from "./Dashboards/AdminDashboard";
 
+
 export default function App() {
+
   return (
     <Router>
       <Routes>

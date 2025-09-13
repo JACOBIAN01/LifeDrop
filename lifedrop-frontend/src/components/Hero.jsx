@@ -1,9 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import  useDonorStatus  from "../Hooks/DonorStatus.jsx";
+import useDonorStatus from "../Hooks/DonorStatus.jsx";
+import JoinWhatsAppButton from "./Join_Community.jsx";
+
+
+
 
 export default function Hero() {
   const navigate = useNavigate();
   const { isDonor, _ } = useDonorStatus();
+
 
   return (
     <section className="relative w-full h-screen overflow-hidden">
@@ -28,26 +33,31 @@ export default function Hero() {
         <p className="text-white text-lg md:text-2xl mt-4 drop-shadow-md">
           LifeDrop connects donors and patients in real-time for urgent needs.
         </p>
-        <div className="flex justify-center items-center gap-5">
+
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-6 w-full max-w-3xl mx-auto">
           {isDonor ? (
-            <p className="mt-6 text-green-600 bg-green-100 border border-green-400 px-6 py-3 rounded-xl text-lg font-semibold shadow-md">
-              Thank You for become a Donor
-            </p>
+            <button
+              className="flex-1 flex items-center justify-center text-green-700 bg-green-100 border border-green-400 px-3 py-3 rounded-xl text-lg font-semibold shadow-md hover:bg-green-200 transition-all duration-200"
+              onClick={() => navigate("/dashboard")}
+            >
+              🎉 Explore your Dashboard
+            </button>
           ) : (
             <button
               onClick={() => navigate("/donor")}
-              className="mt-6 bg-red-500 hover:bg-red-600 text-white border border-white px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+              className="flex-1 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white border border-white px-3 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
             >
               Be a Hero
             </button>
           )}
           <button
             onClick={() => navigate("/request")}
-            className="mt-6 bg-white hover:bg-red-50 text-red-600 border border-red-500 px-6 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+            className="flex-1 flex items-center justify-center bg-white hover:bg-red-50 text-red-600 border border-red-500 px-3 py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
           >
             Ask for Help
           </button>
         </div>
+
         {/* NGO HERO */}
         <div
           className="flex flex-col items-center justify-center mt-8 space-y-3 text-center 
@@ -66,6 +76,7 @@ export default function Hero() {
             Register Your Organization
           </button>
         </div>
+       {isDonor && <JoinWhatsAppButton />}
       </div>
     </section>
   );

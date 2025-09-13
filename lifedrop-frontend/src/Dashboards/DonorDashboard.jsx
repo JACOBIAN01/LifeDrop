@@ -1,14 +1,12 @@
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { MatchedBloodRequest } from "../components/MatchedBloodRequest";
-import { User, Heart, Home, Users, Activity,Globe } from "lucide-react";
+import { User, Heart, Home, Users, Activity, Globe } from "lucide-react";
 import AllBloodRequest from "../components/AllBloodRequest";
 import MyBloodRequest from "../components/MyBloodRequest";
 import JoinWhatsAppButton from "../components/Join_Community";
 
-
-
-export default function DonorDashboard({ donorData}) {
+export default function DonorDashboard({ donorData }) {
   const [showAllRequest, setShowAllRequest] = useState(false);
   const [showMyRequest, setShowMyRequest] = useState(true);
   const [showMatchedRequest, setShowMatchedRequest] = useState(false);
@@ -44,7 +42,7 @@ export default function DonorDashboard({ donorData}) {
           />
           <ActionButtons />
         </div>
-        <div className="row-span-2 col-span-2 overflow-y-auto max-h-[85vh]">
+        <div className="row-span-2 col-span-2 overflow-y-auto max-h-[80vh]">
           {showMyRequest && <MyRequestsCard />}
           {showMatchedRequest && <MatchedRequestsCard donorData={donorData} />}
           {showAllRequest && <AllRequestsCard donorData={donorData} />}
@@ -53,7 +51,6 @@ export default function DonorDashboard({ donorData}) {
     </div>
   );
 }
-
 
 /* 🔹 Profile Card */
 function ProfileCard({ donorData }) {
@@ -183,14 +180,14 @@ function ActionButtons() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 justify-center mt-6">
+    <div className="flex flex-col md:flex-row gap-4 justify-center mt-3">
       {/* Ask for Help */}
       <button
         onClick={() => navigate("/request")}
         className="flex items-center gap-2 px-5 py-2 rounded-lg
                    bg-gradient-to-r from-red-500 to-red-600
                    text-white text-lg font-semibold shadow-md
-                   hover:shadow-lg hover:scale-105 active:scale-95
+                   hover:shadow-lg 
                    transition-all duration-300"
       >
         <Heart size={20} />
@@ -203,30 +200,15 @@ function ActionButtons() {
         className="flex items-center gap-2 px-5 py-2 rounded-lg
                    bg-gradient-to-r from-gray-100 to-gray-200
                    text-gray-700 text-lg font-semibold shadow-md
-                   hover:shadow-lg hover:scale-105 active:scale-95
+                   hover:shadow-lg  active:scale-95
                    transition-all duration-300"
       >
         <Home size={20} />
         Home
       </button>
-
-      {/* WhatsApp Join */}
-      <JoinWhatsAppButton />
     </div>
   );
 }
-
-function Wish({ user }) {
-  return (
-    <>
-      <h1 className="text-2xl md:text-3xl font-bold text-red-800 text-center">
-        Welcome to the Dashboard {user ? user.displayName || "User" : "User"}
-      </h1>
-    </>
-  );
-}
-
-
 
 export function RequestButtons({
   handleShowMyRequest,

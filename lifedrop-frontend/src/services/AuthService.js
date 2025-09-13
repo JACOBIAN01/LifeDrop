@@ -23,6 +23,7 @@ export const useCurrentUser = () => {
   return user;
 };
 
+
 //Get Current User Details
 export const useCurrentUserDetails = () => {
   const [userDetails, setUserDetails] = useState(null);
