@@ -3,6 +3,7 @@ import cors from "cors";
 import { db, serverTimestamp} from "./Firebase.js";
 import admin from "firebase-admin";
 import twilio from "twilio";
+require("dotenv").config();
 
 // Twilio credentials
 
