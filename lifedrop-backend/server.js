@@ -3,10 +3,11 @@ import cors from "cors";
 import { db, serverTimestamp} from "./Firebase.js";
 import admin from "firebase-admin";
 import twilio from "twilio";
+
 // Twilio credentials
 
-const accountSid = 'AC7e2c150f9083209ed0ae0cbe3d39c380';
-const authToken = "91a707d380f1c72442ea27c6986d6bda";
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
 
 
