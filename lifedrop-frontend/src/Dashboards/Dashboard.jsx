@@ -10,13 +10,12 @@ import Ask_to_Sign_In from "../components/Ask_to_Sign_In";
 import Navbar from "../components/Navbar";
 import useBloodRequestListener from "../Hooks/useBloodRequestListener";
 
+
 export default function Dashboard() {
   const user = useCurrentUser();
-  useBloodRequestListener(donorData.bloodType);
   const { isDonor, donorData } = useDonorStatus();
   const userDetails = useCurrentUserDetails();
   const orgDetails = useOrgDetails();
-
   const [NonDonor, SetNonDonor] = useState(false);
   const [Donor, SetDonor] = useState(false);
   const [Org, SetOrg] = useState(false);
@@ -44,16 +43,21 @@ export default function Dashboard() {
     }
   }, [userDetails, donorData, orgDetails]);
 
-  if (!user) {
-    return <Ask_to_Sign_In />;
-  }
+useBloodRequestListener(
+  Donor && donorData?.bloodType ? donorData.bloodType : null
+);
 
+  if (user === undefined) {
+    return <Loading message="Loading Data..." />;
+  }
   if (!userDetails) return <Loading message="Loading Data..." />;
   if (user && isDonor === undefined)
     return <Loading message="Checking Dashboard..." />;
   if (user && isDonor && !donorData)
     return <Loading message="Loading Donor Data..." />;
-
+  if (!user) {
+    return <Ask_to_Sign_In />;
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100">
       <Navbar />

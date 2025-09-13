@@ -3,7 +3,13 @@ import cors from "cors";
 import { db, serverTimestamp} from "./Firebase.js";
 import admin from "firebase-admin";
 import twilio from "twilio";
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config();
+
+console.log(
+  "GOOGLE_APPLICATION_CREDENTIALS:",
+  process.env.GOOGLE_APPLICATION_CREDENTIALS
+);
 
 // Twilio credentials
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -17,6 +23,18 @@ app.use(express.json());
 
 const PORT = 5000;
 
+async function testFirestore() {
+  try {
+    const docRef = db.collection("test").doc("ping");
+    await docRef.set({ timestamp: serverTimestamp() });
+    console.log("Firestore connection successful!");
+  } catch (err) {
+    console.error("Firestore connection failed:", err);
+  }
+}
+
+testFirestore();
+
 
 // Post Blood Request API
 app.post("/api/bloodRequest", async (req, res) => {
@@ -24,7 +42,7 @@ app.post("/api/bloodRequest", async (req, res) => {
     const {
       uid,
       name,
-      email, // still store for display
+      email,
       bloodGroupNeeded,
       hospitalName,
       hospitalAddress,
@@ -39,9 +57,14 @@ app.post("/api/bloodRequest", async (req, res) => {
 
     if (!uid) return res.status(400).json({ error: "User UID is required" });
 
-    // ✅ always create a new request document
+    // ✅ Safe date conversion
+    let neededByDate = null;
+    if (neededBy && !isNaN(Date.parse(neededBy))) {
+      neededByDate = new Date(neededBy);
+    }
+
     const docRef = await db.collection("requests").add({
-      uid, // store UID
+      uid,
       name,
       email,
       bloodGroupNeeded,
@@ -50,11 +73,11 @@ app.post("/api/bloodRequest", async (req, res) => {
       city,
       state,
       country,
-      neededBy: neededBy ? new Date(neededBy) : null,
+      neededBy: neededByDate,
       patientCondition,
       phoneNumber,
       status: status || "Pending",
-      requestedAt: serverTimestamp(),
+      requestedAt: admin.firestore.FieldValue.serverTimestamp(), // ✅ use admin
     });
 
     res.status(201).json({
@@ -62,10 +85,14 @@ app.post("/api/bloodRequest", async (req, res) => {
       message: "Request created successfully",
     });
   } catch (err) {
-    console.error("Error creating request:", err);
-    res.status(500).json({ error: err.message });
+    console.error("❌ Error creating request:", err); // full error
+    res.status(500).json({ error: err.message, stack: err.stack });
   }
 });
+
+
+
+
 
 // Donor Registration API
 app.post("/api/NewDonorRegistration", async (req, res) => {
@@ -238,7 +265,6 @@ app.post("/send", async (req, res) => {
 });
 
 
-
 //Notification
 app.post("/api/send-message", async (req, res) => {
   const { to, message } = req.body;
@@ -246,7 +272,7 @@ console.log("Received:", req.body);
   try {
     const response = await client.messages.create({
       from: "whatsapp:+14155238886", // Twilio WhatsApp number
-      to: `whatsapp:${to}`,
+      to: `whatsapp:+91${to}`,
       body: message,
     });
     res.status(200).json({ success: true, sid: response.sid });

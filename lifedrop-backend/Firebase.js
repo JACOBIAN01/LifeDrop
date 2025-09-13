@@ -1,23 +1,21 @@
 import admin from "firebase-admin";
-import fs from "fs";
 import dotenv from "dotenv";
 
-dotenv.config(); // Load environment variables from .env
+dotenv.config();
 
+// Ensure the environment variable is set
 if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
   throw new Error(
     "Missing GOOGLE_APPLICATION_CREDENTIALS environment variable"
   );
 }
 
-const serviceAccount = JSON.parse(
-  fs.readFileSync(process.env.GOOGLE_APPLICATION_CREDENTIALS)
-);
-
+// Initialize Firebase Admin using Application Default Credentials
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.applicationDefault(),
 });
 
 const db = admin.firestore();
 const serverTimestamp = admin.firestore.FieldValue.serverTimestamp;
+
 export { db, serverTimestamp };
