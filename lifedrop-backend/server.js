@@ -1,12 +1,21 @@
 import express from "express";
 import cors from "cors";
-import { db, serverTimestamp } from "./Firebase.js";
+import { db, serverTimestamp} from "./Firebase.js";
+import admin from "firebase-admin";
+import twilio from "twilio";
+// Twilio credentials
+
+const accountSid = 'AC7e2c150f9083209ed0ae0cbe3d39c380';
+const authToken = "91a707d380f1c72442ea27c6986d6bda";
+const client = twilio(accountSid, authToken);
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const PORT = 5000;
+
 
 // Post Blood Request API
 app.post("/api/bloodRequest", async (req, res) => {
@@ -188,10 +197,6 @@ app.post("/api/register-org", async (req, res) => {
 });
 
 
-app.get("api/hello", async (req, res) => {
-  console.log("inside server");
-  res.json({ message: "Hello route working!" });
-});
 
 
 // Update Request Status
@@ -211,6 +216,41 @@ app.post("/api/update-status", async (req, res) => {
   } catch (err) {
     console.error("UPDATE ERROR:", err);
     return res.status(400).json({ error: err.message });
+  }
+});
+
+//Manage Notification
+app.post("/send", async (req, res) => {
+  const { token, title, body } = req.body;
+
+  const message = {
+    notification: { title, body },
+    token,
+  };
+
+  try {
+    const response = await admin.messaging().send(message);
+    res.status(200).json({ success: true, response });
+  } catch (error) {
+    res.status(500).json({ success: false, error });
+  }
+});
+
+
+
+//Notification
+app.post("/api/send-message", async (req, res) => {
+  const { to, message } = req.body;
+console.log("Received:", req.body);
+  try {
+    const response = await client.messages.create({
+      from: "whatsapp:+14155238886", // Twilio WhatsApp number
+      to: `whatsapp:${to}`,
+      body: message,
+    });
+    res.status(200).json({ success: true, sid: response.sid });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
