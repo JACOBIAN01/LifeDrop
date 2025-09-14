@@ -23,9 +23,10 @@ export async function UpdateRequestStatus(id, status) {
 }
 
 export async function SendWhatsappMessage(to, message) {
+  console.log("Inside Send WHatsapp Fuhnction to-:"+to);
   const res = await axios.post(`${API_URL}/send-message`, {
     to,
     message,
   });
-  return res.data;
+  return res.success;
 }

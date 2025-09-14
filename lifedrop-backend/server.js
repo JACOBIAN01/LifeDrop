@@ -15,7 +15,14 @@ console.log(
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
-
+console.log(
+  "Twilio SID:",
+  process.env.TWILIO_ACCOUNT_SID ? "Loaded" : "Missing"
+);
+console.log(
+  "Twilio Auth Token:",
+  process.env.TWILIO_AUTH_TOKEN ? "Loaded" : "Missing"
+);
 
 const app = express();
 app.use(cors());
@@ -34,6 +41,7 @@ async function testFirestore() {
 }
 
 testFirestore();
+
 
 
 // Post Blood Request API
@@ -247,36 +255,24 @@ app.post("/api/update-status", async (req, res) => {
   }
 });
 
-//Manage Notification
-app.post("/send", async (req, res) => {
-  const { token, title, body } = req.body;
-
-  const message = {
-    notification: { title, body },
-    token,
-  };
-
-  try {
-    const response = await admin.messaging().send(message);
-    res.status(200).json({ success: true, response });
-  } catch (error) {
-    res.status(500).json({ success: false, error });
-  }
-});
 
 
 //Notification
 app.post("/api/send-message", async (req, res) => {
-  const { to, message } = req.body;
-console.log("Received:", req.body);
+const { to, message } = req.body;
+if(to==null){console.log("to null");}
+console.log("Inside server to  Received:", to);
+console.log("Inside Server msg Received: ",message);
   try {
     const response = await client.messages.create({
       from: "whatsapp:+14155238886", // Twilio WhatsApp number
       to: `whatsapp:+91${to}`,
       body: message,
     });
+    console.log("Success Send Alert");
     res.status(200).json({ success: true, sid: response.sid });
   } catch (error) {
+    console.log("Error Alert "+error.message);
     res.status(500).json({ success: false, error: error.message });
   }
 });

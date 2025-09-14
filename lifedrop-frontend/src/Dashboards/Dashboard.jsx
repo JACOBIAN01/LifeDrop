@@ -43,9 +43,11 @@ export default function Dashboard() {
     }
   }, [userDetails, donorData, orgDetails]);
 
-useBloodRequestListener(
+  
+useBloodRequestListener(donorData?.phone,
   Donor && donorData?.bloodType ? donorData.bloodType : null
 );
+
 
   if (user === undefined) {
     return <Loading message="Loading Data..." />;
