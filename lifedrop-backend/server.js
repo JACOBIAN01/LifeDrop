@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { db, serverTimestamp} from "./Firebase.js";
+import { db, serverTimestamp } from "./Firebase.js";
 import admin from "firebase-admin";
 import twilio from "twilio";
 import dotenv from "dotenv";
@@ -42,9 +42,7 @@ async function testFirestore() {
 
 testFirestore();
 
-
-
-// Post Blood Request API
+// Blood Request Submit and Donor Alerts
 app.post("/api/bloodRequest", async (req, res) => {
   try {
     const {
@@ -65,12 +63,13 @@ app.post("/api/bloodRequest", async (req, res) => {
 
     if (!uid) return res.status(400).json({ error: "User UID is required" });
 
-    // ✅ Safe date conversion
+    // Safe date conversion
     let neededByDate = null;
     if (neededBy && !isNaN(Date.parse(neededBy))) {
       neededByDate = new Date(neededBy);
     }
 
+    // Create request with empty notifiedBy array
     const docRef = await db.collection("requests").add({
       uid,
       name,
@@ -85,22 +84,59 @@ app.post("/api/bloodRequest", async (req, res) => {
       patientCondition,
       phoneNumber,
       status: status || "Pending",
-      requestedAt: admin.firestore.FieldValue.serverTimestamp(), // ✅ use admin
+      requestedAt: admin.firestore.FieldValue.serverTimestamp(),
+      notifiedBy: [],
     });
+
+    // Fetch all donors with matching blood type
+    const donorsSnapshot = await db
+      .collection("donors")
+      .where("bloodType", "==", bloodGroupNeeded)
+      .get();
+
+    for (const donorDoc of donorsSnapshot.docs) {
+      const donor = donorDoc.data();
+
+      // Skip creator and donors without phone
+      if (donor.userId === uid || !donor.phone) continue;
+
+      // Check if donor has already been notified
+      const requestSnap = await db.collection("requests").doc(docRef.id).get();
+      const requestData = requestSnap.data();
+      if (requestData.notifiedBy.includes(donor.userId)) continue;
+
+      // Send WhatsApp via your existing API
+      try {
+        await axios.post(`http://localhost:${PORT}/api/send-message`, {
+          to: donor.phone,
+          message: `🚨 Urgent Blood Request 🚨\n\nA patient in *${
+            city || "your area"
+          }* needs *${bloodGroupNeeded}* blood.\n💉 Your donation could save a life today.\n❤️ Please confirm if available.`,
+        });
+
+        console.log("WhatsApp alert sent to:", donor.phone);
+
+        // Add donor to notifiedBy array
+        await db
+          .collection("requests")
+          .doc(docRef.id)
+          .update({
+            notifiedBy: admin.firestore.FieldValue.arrayUnion(donor.userId),
+          });
+      } catch (err) {
+        console.error("Error sending WhatsApp via internal API:", err.message);
+      }
+    }
 
     res.status(201).json({
       id: docRef.id,
-      message: "Request created successfully",
+      message: "Request created and donors notified successfully",
     });
   } catch (err) {
-    console.error("❌ Error creating request:", err); // full error
+    console.error("❌ Error creating request:", err);
     res.status(500).json({ error: err.message, stack: err.stack });
   }
 });
-
-
-
-
 
 // Donor Registration API
 app.post("/api/NewDonorRegistration", async (req, res) => {
@@ -232,9 +268,6 @@ app.post("/api/register-org", async (req, res) => {
   }
 });
 
-
-
-
 // Update Request Status
 app.post("/api/update-status", async (req, res) => {
   try {
@@ -255,14 +288,14 @@ app.post("/api/update-status", async (req, res) => {
   }
 });
 
-
-
 //Notification
 app.post("/api/send-message", async (req, res) => {
-const { to, message } = req.body;
-if(to==null){console.log("to null");}
-console.log("Inside server to  Received:", to);
-console.log("Inside Server msg Received: ",message);
+  const { to, message } = req.body;
+  if (to == null) {
+    console.log("to null");
+  }
+  console.log("Inside server to  Received:", to);
+  console.log("Inside Server msg Received: ", message);
   try {
     const response = await client.messages.create({
       from: "whatsapp:+14155238886", // Twilio WhatsApp number
@@ -272,12 +305,10 @@ console.log("Inside Server msg Received: ",message);
     console.log("Success Send Alert");
     res.status(200).json({ success: true, sid: response.sid });
   } catch (error) {
-    console.log("Error Alert "+error.message);
+    console.log("Error Alert " + error.message);
     res.status(500).json({ success: false, error: error.message });
   }
 });
-
-
 
 // Start Server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
