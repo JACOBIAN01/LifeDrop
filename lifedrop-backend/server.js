@@ -4,6 +4,8 @@ import { db, serverTimestamp } from "./Firebase.js";
 import admin from "firebase-admin";
 import twilio from "twilio";
 import dotenv from "dotenv";
+import axios from "axios";
+
 dotenv.config();
 
 console.log(
@@ -288,27 +290,44 @@ app.post("/api/update-status", async (req, res) => {
   }
 });
 
+
+
+
 //Notification
 app.post("/api/send-message", async (req, res) => {
   const { to, message } = req.body;
-  if (to == null) {
-    console.log("to null");
-  }
-  console.log("Inside server to  Received:", to);
-  console.log("Inside Server msg Received: ", message);
-  try {
-    const response = await client.messages.create({
-      from: "whatsapp:+14155238886", // Twilio WhatsApp number
-      to: `whatsapp:+91${to}`,
-      body: message,
+  
+  console.log(
+    `⚠️ WhatsApp sending is currently unavailable due to limited Twilio credits.\n` +
+      `Recipient: ${to}\n` +
+      `Message: ${message}\n` +
+      `Uncomment the client.messages.create code below to enable sending when credits are available.`
+  );
+
+  // try {
+  //   const response = await client.messages.create({
+  //     from: "whatsapp:+14155238886", // Twilio WhatsApp number
+  //     to: `whatsapp:+91${to}`,
+  //     body: message,
+  //   });
+  //   console.log("Success Send Alert");
+  //   res.status(200).json({ success: true, sid: response.sid });
+  // } catch (error) {
+  //   console.log("Error Alert " + error.message);
+  //   res.status(500).json({ success: false, error: error.message });
+  // }
+
+  res
+    .status(200)
+    .json({
+      success: true,
+      message:
+        "Message sending is currently disabled (Twilio credits limited).",
     });
-    console.log("Success Send Alert");
-    res.status(200).json({ success: true, sid: response.sid });
-  } catch (error) {
-    console.log("Error Alert " + error.message);
-    res.status(500).json({ success: false, error: error.message });
-  }
+
 });
+
+
 
 // Start Server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -17,5 +17,6 @@ admin.initializeApp({
 
 const db = admin.firestore();
 const serverTimestamp = admin.firestore.FieldValue.serverTimestamp;
+db.settings({ ignoreUndefinedProperties: true });
 
 export { db, serverTimestamp };
