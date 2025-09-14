@@ -8,7 +8,6 @@ import NonDonorDashboard from "../Dashboards/NonDonorDashboard";
 import OrgDashboard from "../Dashboards/HospitalDashboard";
 import Ask_to_Sign_In from "../components/Ask_to_Sign_In";
 import Navbar from "../components/Navbar";
-import useBloodRequestListener from "../Hooks/useBloodRequestListener";
 
 
 export default function Dashboard() {
@@ -42,11 +41,6 @@ export default function Dashboard() {
       SetData(orgDetails); // from useOrgDetails()
     }
   }, [userDetails, donorData, orgDetails]);
-
-  
-useBloodRequestListener(donorData?.phone,
-  Donor && donorData?.bloodType ? donorData.bloodType : null
-);
 
 
   if (user === undefined) {

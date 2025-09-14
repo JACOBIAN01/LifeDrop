@@ -2,6 +2,9 @@ import { useAllRequests } from "../Hooks/ManageRequest";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { useCurrentUser } from "../services/AuthService";
 import { db } from "../services/firebase";
+import { useEffect, useRef } from "react";
+import {SendWhatsappMessage} from "../services/api"
+
 
 export function MatchedBloodRequest({ DonorData }) {
   const { requests, loading, error } = useAllRequests();
@@ -44,8 +47,37 @@ export function MatchedBloodRequest({ DonorData }) {
     alert("Your interest has been recorded!");
   };
 
+  //Blood Request Whatapp Alert Hook
+  // Keep track of requests already notified
+  const notifiedRequests = useRef(new Set());
+
   const matchedRequests = requests.filter(
-    (req) => req.bloodGroupNeeded === DonorData?.bloodType);
+    (req) => req.bloodGroupNeeded === DonorData?.bloodType
+  );
+
+  // 🔔 Notify only for newly added requests
+  useEffect(() => {
+    matchedRequests.forEach((req) => {
+      if (!notifiedRequests.current.has(req.id)) {
+        // mark as notified
+        notifiedRequests.current.add(req.id);
+
+        // send WhatsApp
+        if (DonorData?.phone) {
+          SendWhatsappMessage(
+            DonorData.phone,
+            `Urgent Blood Request A patient in *${
+              req.city || "near you"
+            }* needs *${req.bloodGroupNeeded}* blood.
+             💉 Your donation can save a life today! 
+              Please confirm if you’re available. ❤️`
+          );
+          console.log("WhatsApp alert sent for request:", req.id);
+        }
+      }
+    });
+  }, [matchedRequests, DonorData?.phone]);
+
 
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-lg transition">
