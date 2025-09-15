@@ -6,9 +6,8 @@ import {
   updateProfile,
   onAuthStateChanged,
 } from "firebase/auth";
-import { setDoc, doc,getDoc } from "firebase/firestore";
-import { auth,db } from "./firebase";
- 
+import { setDoc, doc, getDoc } from "firebase/firestore";
+import { auth, db } from "./firebase"; 
 
 //Get Current User
 export const useCurrentUser = () => {
@@ -24,7 +23,6 @@ export const useCurrentUser = () => {
   return user;
 };
 
-
 //Get Current User Details
 export const useCurrentUserDetails = () => {
   const [userDetails, setUserDetails] = useState(null);
@@ -36,13 +34,13 @@ export const useCurrentUserDetails = () => {
     }
     const getDetails = async () => {
       try {
-        const userDoc = doc(db,"users",user.uid)
-        const userSnap = await getDoc(userDoc)
+        const userDoc = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userDoc);
         if (!userSnap.exists()) {
           console.log("No such user!");
           setUserDetails(null);
         } else {
-          setUserDetails(userSnap.data()); 
+          setUserDetails(userSnap.data());
         }
       } catch (err) {
         console.log(err);
