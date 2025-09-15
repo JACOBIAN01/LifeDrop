@@ -7,7 +7,8 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { setDoc, doc,getDoc } from "firebase/firestore";
-import { auth, db } from "./firebase";
+import { db } from "./firebase";
+import {auth } from "./firebase"; 
 
 //Get Current User
 export const useCurrentUser = () => {
