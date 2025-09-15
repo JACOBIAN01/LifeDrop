@@ -3,7 +3,6 @@ import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { useCurrentUser } from "../services/AuthService";
 import { db } from "../services/firebase";
 
-
 export function MatchedBloodRequest({ DonorData }) {
   const { requests, loading, error } = useAllRequests();
   const user = useCurrentUser();
@@ -45,19 +44,14 @@ export function MatchedBloodRequest({ DonorData }) {
     alert("Your interest has been recorded!");
   };
 
-
   const matchedRequests = requests.filter(
     (req) => req.bloodGroupNeeded === DonorData?.bloodType
   );
-
 
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-lg transition">
       {loading && <p className="text-gray-500">Loading requests...</p>}
       {error && <p className="text-red-500">Error loading requests</p>}
-      {!loading && matchedRequests.length === 0 && (
-        <p className="text-gray-600">No active requests right now.</p>
-      )}
 
       {matchedRequests.map((req) => {
         const alreadyResponded = req.responses?.some(
@@ -111,6 +105,10 @@ export function MatchedBloodRequest({ DonorData }) {
           </div>
         );
       })}
+
+      {!loading && matchedRequests.length === 0 && (
+        <p className="text-gray-600">No active requests right now.</p>
+      )}
     </div>
   );
 }

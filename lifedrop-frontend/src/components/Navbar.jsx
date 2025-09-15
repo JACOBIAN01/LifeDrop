@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useCurrentUser, logout } from "../services/AuthService";
-
+import Wish from "./Wish";
 
 const UserSignOut = () => {
   const navigate = useNavigate();
@@ -26,10 +26,10 @@ const UserSignOut = () => {
 };
 
 
+
 const UserSignIn = ({ UserName}) => {
 
   const navigate = useNavigate();
-
 
   const handleLogout = async () => {
     await logout();
@@ -40,9 +40,12 @@ const UserSignIn = ({ UserName}) => {
     navigate("/dashboard");
   }
 
+
   return (
     <div className="flex space-x-4 items-center">
-      <p className="text-gray-700 font-medium">Hello {UserName}</p>
+
+     <Wish name={UserName}/>
+
       <button
         onClick={handleLogout}
         className="px-4 py-2 rounded-lg bg-rose-400 text-white font-semibold hover:bg-rose-500 transition"

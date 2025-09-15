@@ -8,7 +8,7 @@ import NonDonorDashboard from "../Dashboards/NonDonorDashboard";
 import OrgDashboard from "../Dashboards/HospitalDashboard";
 import Ask_to_Sign_In from "../components/Ask_to_Sign_In";
 import Navbar from "../components/Navbar";
-
+import AdminDashboard from "./AdminDashboard";
 
 export default function Dashboard() {
   const user = useCurrentUser();
@@ -19,11 +19,18 @@ export default function Dashboard() {
   const [Donor, SetDonor] = useState(false);
   const [Org, SetOrg] = useState(false);
   const [Data, SetData] = useState(null);
+  const [Admin, setAdmin] = useState(false);
 
   // run only when userDetails changes
   useEffect(() => {
     if (!userDetails) return;
-
+    if (userDetails.userType === "admin") {
+      setAdmin(true);
+      SetDonor(false);
+      SetNonDonor(false);
+      SetOrg(false);
+      SetData(null);
+    }
     if (userDetails.userType === "donor") {
       SetDonor(true);
       SetNonDonor(false);
@@ -41,7 +48,6 @@ export default function Dashboard() {
       SetData(orgDetails); // from useOrgDetails()
     }
   }, [userDetails, donorData, orgDetails]);
-
 
   if (user === undefined) {
     return <Loading message="Loading Data..." />;
@@ -61,10 +67,13 @@ export default function Dashboard() {
         {Donor && <DonorDashboard donorData={Data} />}
         {NonDonor && <NonDonorDashboard user={user} />}
         {Org && <OrgDashboard orgData={Data} />}
+        {Admin && <AdminDashboard />}
       </div>
     </div>
   );
 }
+
+
 
 function Loading({ message }) {
   return (

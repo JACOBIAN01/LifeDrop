@@ -291,8 +291,6 @@ app.post("/api/update-status", async (req, res) => {
 });
 
 
-
-
 //Notification
 app.post("/api/send-message", async (req, res) => {
   const { to, message } = req.body;
