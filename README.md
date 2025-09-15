@@ -2,7 +2,7 @@
 
 **LifeDrop** is a full-stack, real-time web application designed to bridge the critical gap between blood donors, recipients, and healthcare organizations. It provides a centralized and efficient platform for managing urgent blood requests, connecting heroes with those in need, instantly.
 
-**Live Demo:** [Link to Deployed Application](#) *(if available)*
+**Live Demo:** [[Link to Deployed Application](#) *(if available)*](https://life-drop-xi.vercel.app/)
 
 ---
 
