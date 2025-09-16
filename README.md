@@ -17,7 +17,12 @@
 - 📝 **User & Donor Registration:** Seamless sign-up and registration to become certified donors.  
 - 🚀 **Dynamic Dashboards:** Tailored dashboards providing relevant info and actions at a glance.  
 - ✅ **Secure Authentication:** Robust sign-up, login, and session management powered by Firebase.  
-- 📱 **Fully Responsive UI:** Modern, clean, and intuitive interface built with Tailwind CSS.  
+- 📱 **Fully Responsive UI:** Modern, clean, and intuitive interface built with Tailwind CSS.
+
+## 📢 Advanced Integration — WhatsApp Alerts (Twilio)  
+- 🔔 **Instant Notifications:** Urgent requests trigger automated WhatsApp alerts to matching donors.  
+- ⚡ **Event-Driven Flow:** Firebase Cloud Functions filter donors by city & blood type, then call Twilio API.  
+- 📊 **Admin Monitoring:** Track alerts, delivery status, and donor engagement.  
 
 ---
 
