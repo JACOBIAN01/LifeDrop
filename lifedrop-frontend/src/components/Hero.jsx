@@ -2,12 +2,12 @@ import { useNavigate } from "react-router-dom";
 import useDonorStatus from "../Hooks/DonorStatus.jsx";
 import JoinWhatsAppButton from "./Join_Community.jsx";
 import { useCurrentUser } from "../services/AuthService.js";
-
+import LoadingText from "./Loading.jsx";
 export default function Hero() {
- const { user, authLoading } = useCurrentUser();
- const { isDonor,donorLoading } = useDonorStatus();
+  const { user, authLoading } = useCurrentUser();
+  const { isDonor, donorLoading } = useDonorStatus();
 
- const isLoading = authLoading || donorLoading;
+  const isLoading = authLoading || donorLoading;
 
   return (
     <section className="relative w-full h-screen overflow-hidden">
@@ -27,20 +27,32 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 flex flex-col justify-center items-center text-center h-full px-4">
         {isLoading ? (
-          <p className="text-white text-lg">Loading...</p>
+          <LoadingText text="Loading..." />
         ) : (
           <>
             <Content />
-            {user && <ActionButton isDonor={isDonor} />}
-            <NGO />
-            {isDonor && <JoinWhatsAppButton />}
+
+            {!user && <NGO />}
+            {user && !isDonor && (
+              <>
+                <ActionButton isDonor={false} />
+                <NGO />
+              </>
+            )}
+
+            {user && isDonor && (
+              <>
+                <ActionButton isDonor={true} />
+                <NGO />
+                <JoinWhatsAppButton />
+              </>
+            )}
           </>
         )}
       </div>
     </section>
   );
 }
-
 
 function Content() {
   return (

@@ -50,11 +50,11 @@ export default function Dashboard() {
   }, [user,userDetails, donorData, orgDetails]);
 
   if (user === undefined) {
-    return <Loading message="Loading Data (User Undefined)..." />;
+    return <Loading message="Loading Data..." />;
   }
-  if (!userDetails) return <Loading message="Loading Data (User Data Loading)..." />;
+  if (!userDetails) return <Loading message="Loading Data..." />;
   if (user && isDonor === undefined)
-    return <Loading message="Checking Dashboard (Loading Donor)..." />;
+    return <Loading message="Checking Dashboard..." />;
   if (user && isDonor && !donorData)
     return <Loading message="Loading Donor Data..." />;
   if (!user) {
