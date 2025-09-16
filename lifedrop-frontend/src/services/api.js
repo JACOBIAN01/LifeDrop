@@ -1,9 +1,6 @@
 import axios from "axios";
 
-
-
-// eslint-disable-next-line no-undef
-const API_URL = process.env.REACT_APP_BACKEND_URL || "https://lifedrop-zfsi.onrender.com/api";
+const API_URL = import.meta.env.REACT_APP_BACKEND_URL || "https://lifedrop-zfsi.onrender.com/api";
 
 
 export async function PostBloodRequest(requestData) {

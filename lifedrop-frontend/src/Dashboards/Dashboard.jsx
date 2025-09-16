@@ -11,7 +11,7 @@ import Navbar from "../components/Navbar";
 import AdminDashboard from "./AdminDashboard";
 
 export default function Dashboard() {
-  const user = useCurrentUser();
+ const { user, _ } = useCurrentUser();
   const { isDonor, donorData } = useDonorStatus();
   const userDetails = useCurrentUserDetails();
   const orgDetails = useOrgDetails();
@@ -23,7 +23,7 @@ export default function Dashboard() {
 
   // run only when userDetails changes
   useEffect(() => {
-    if (!userDetails) return;
+    if (!user || !userDetails) return;
     if (userDetails.userType === "admin") {
       setAdmin(true);
       SetDonor(false);
@@ -47,19 +47,20 @@ export default function Dashboard() {
       SetNonDonor(false);
       SetData(orgDetails); // from useOrgDetails()
     }
-  }, [userDetails, donorData, orgDetails]);
+  }, [user,userDetails, donorData, orgDetails]);
 
   if (user === undefined) {
-    return <Loading message="Loading Data..." />;
+    return <Loading message="Loading Data (User Undefined)..." />;
   }
-  if (!userDetails) return <Loading message="Loading Data..." />;
+  if (!userDetails) return <Loading message="Loading Data (User Data Loading)..." />;
   if (user && isDonor === undefined)
-    return <Loading message="Checking Dashboard..." />;
+    return <Loading message="Checking Dashboard (Loading Donor)..." />;
   if (user && isDonor && !donorData)
     return <Loading message="Loading Donor Data..." />;
   if (!user) {
     return <Ask_to_Sign_In />;
   }
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100">
       <Navbar />

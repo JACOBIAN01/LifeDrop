@@ -7,7 +7,7 @@ export default function useUsers() {
   const [users, setUsers] = useState([]);
   const [error,setError] = useState(null);
   const [loading , setLoading] = useState(true);
-  const user = useCurrentUser();
+  const { user, _ } = useCurrentUser();
 
   useEffect(() => {
     if (!user) return;

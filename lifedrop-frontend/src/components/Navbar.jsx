@@ -2,9 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCurrentUser, logout } from "../services/AuthService";
 import Wish from "./Wish";
 
-const UserSignOut = () => {
-  const navigate = useNavigate();
 
+const UserSignOut = ({ navigate }) => {
   return (
     <div className="flex space-x-4">
       <button
@@ -25,26 +24,19 @@ const UserSignOut = () => {
   );
 };
 
-
-
-const UserSignIn = ({ UserName}) => {
-
-  const navigate = useNavigate();
-
+const UserSignIn = ({ UserName, navigate }) => {
   const handleLogout = async () => {
     await logout();
-    navigate("/")
+    navigate("/");
   };
 
-  const handleDashboard = ()=>{
+  const handleDashboard = () => {
     navigate("/dashboard");
-  }
-
+  };
 
   return (
     <div className="flex space-x-4 items-center">
-
-     <Wish name={UserName}/>
+      {UserName && <Wish name={UserName} />}
 
       <button
         onClick={handleLogout}
@@ -62,10 +54,9 @@ const UserSignIn = ({ UserName}) => {
   );
 };
 
-
 export default function Navbar() {
-
-  const user = useCurrentUser();
+  const navigate = useNavigate();
+  const { user, _ } = useCurrentUser();
 
   return (
     <>
@@ -85,10 +76,11 @@ export default function Navbar() {
             <div>
               {user ? (
                 <UserSignIn
-                  UserName={user.displayName || "User"}
+                  navigate={navigate}
+                  UserName={user.displayName || null}
                 />
               ) : (
-                <UserSignOut/>
+                <UserSignOut navigate={navigate} />
               )}
             </div>
           </div>

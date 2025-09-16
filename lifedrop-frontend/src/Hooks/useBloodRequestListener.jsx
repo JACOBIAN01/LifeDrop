@@ -6,7 +6,7 @@
 
 
 // export function useBloodAlerts() {
-//     const user = useCurrentUser()
+//    const { user, _ } = useCurrentUser();
 //   const { requests } = useAllRequests();
 //   const { isDonor, DonorData} = useDonorStatus();
 //   const notifiedRequests = useRef(new Set());

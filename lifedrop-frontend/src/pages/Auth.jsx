@@ -12,7 +12,7 @@ function SignInForm() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const user = useCurrentUser()
+  const {user,_} = useCurrentUser()
     useEffect(() => {
       if (user) {
         navigate("/dashboard");
@@ -64,7 +64,7 @@ function SignUpForm() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const user = useCurrentUser();
+  const { user, _ } = useCurrentUser();
 
   useEffect(() => {
     if (user) {

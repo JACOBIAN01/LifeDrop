@@ -11,10 +11,10 @@ import {
   Droplet,
   AlertCircle,
 } from "lucide-react";
-import Ask_to_Sign_In from "../components/Ask_to_Sign_In"
+import Ask_to_Sign_In from "../components/Ask_to_Sign_In";
 
 export default function BloodRequestPage() {
-  const user = useCurrentUser();
+  const { user, _ } = useCurrentUser();
   const navigate = useNavigate();
 
   const [bloodGroupNeeded, setBloodGroupNeeded] = useState("");
@@ -29,7 +29,6 @@ export default function BloodRequestPage() {
   const [status, setStatus] = useState();
 
   const [buttonText, setButtonText] = useState("Submit Blood Request");
-
 
   if (user === null) return <Ask_to_Sign_In />;
 
@@ -52,7 +51,7 @@ export default function BloodRequestPage() {
       neededBy,
       patientCondition,
       phoneNumber,
-      status:"Pending",
+      status: "Pending",
     };
 
     try {
@@ -226,11 +225,9 @@ export default function BloodRequestPage() {
             >
               <Droplet className="w-5 h-5 mr-2" /> {buttonText}
             </button>
-
           </form>
         </div>
       </div>
     </>
   );
 }
-

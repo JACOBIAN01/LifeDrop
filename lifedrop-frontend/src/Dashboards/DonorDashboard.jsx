@@ -4,7 +4,6 @@ import { MatchedBloodRequest } from "../components/MatchedBloodRequest";
 import { User, Heart, Home, Users, Activity, Globe } from "lucide-react";
 import AllBloodRequest from "../components/AllBloodRequest";
 import MyBloodRequest from "../components/MyBloodRequest";
-import JoinWhatsAppButton from "../components/Join_Community";
 
 export default function DonorDashboard({ donorData }) {
   const [showAllRequest, setShowAllRequest] = useState(false);

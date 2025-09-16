@@ -5,7 +5,7 @@ import { db } from "../services/firebase";
 
 export function MatchedBloodRequest({ DonorData }) {
   const { requests, loading, error } = useAllRequests();
-  const user = useCurrentUser();
+  const { user, _ } = useCurrentUser();
 
   const handleInterest = async (reqId) => {
     const requestRef = doc(db, "requests", reqId);

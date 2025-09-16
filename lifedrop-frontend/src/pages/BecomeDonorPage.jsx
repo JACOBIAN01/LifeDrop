@@ -4,13 +4,12 @@ import Ask_to_Sign_In from "../components/Ask_to_Sign_In";
 import { useCurrentUser } from "../services/AuthService";
 import { useNavigate } from "react-router-dom";
 import { DonorRegistration } from "../services/api";
-import  useDonorStatus  from "../Hooks/DonorStatus";
-
+import useDonorStatus from "../Hooks/DonorStatus";
 
 export default function BecomeDonorPage() {
-  const user = useCurrentUser();
+  const { user, _ } = useCurrentUser();
   const navigate = useNavigate();
-  const { isDonor } = useDonorStatus();
+  const { isDonor, __ } = useDonorStatus();
 
   useEffect(() => {
     if (isDonor) {
@@ -18,12 +17,11 @@ export default function BecomeDonorPage() {
     }
   }, [isDonor, navigate]);
 
-
   if (user === null) {
     return <Ask_to_Sign_In />;
   }
 
-  if (user!=null && isDonor === undefined) {
+  if (user != null && isDonor === undefined) {
     return <div className="text-center mt-10">Checking donor status...</div>;
   }
 

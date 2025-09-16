@@ -6,8 +6,8 @@ import useDonorStatus from "../Hooks/DonorStatus"
 
 export default function AllBloodRequest() {
   const { requests, loading, error } = useAllRequests();
-  const user = useCurrentUser();
-  const { _, DonorData } = useDonorStatus();
+  const { user, __ } = useCurrentUser();
+  const { _ , DonorData } = useDonorStatus();
 
 
   const handleInterest = async (reqId) => {

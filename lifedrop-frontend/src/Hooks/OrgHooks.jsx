@@ -5,8 +5,8 @@ import { db } from "../services/firebase";
 
 export function useOrgDetails() {
   const [orgDetails, setOrgDetails] = useState(null);
-  const user = useCurrentUser();
-
+  const { user,_} = useCurrentUser();
+  
   useEffect(() => {
 
     if (!user) {

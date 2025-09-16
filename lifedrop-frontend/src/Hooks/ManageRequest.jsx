@@ -4,7 +4,7 @@ import { db } from "../services/firebase";
 import { collection, query, onSnapshot,where } from "firebase/firestore";
 
 export function useRequest() {
-  const user = useCurrentUser();
+  const { user, _ } = useCurrentUser();
   const [requestData, setRequestData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,7 +19,6 @@ export function useRequest() {
     try {
       // ✅ filter by UID
       const q = query(collection(db, "requests"), where("uid", "==", user.uid));
-
       const unsubscribe = onSnapshot(
         q,
         (snapshot) => {

@@ -9,24 +9,29 @@ import {
 import { setDoc, doc, getDoc } from "firebase/firestore";
 import { auth, db } from "./firebase"; 
 
+
 //Get Current User
 export const useCurrentUser = () => {
   const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setAuthLoading(false);
     });
+
     return () => unsubscribe();
   }, []);
 
-  return user;
+  return { user, authLoading };
 };
+
 
 //Get Current User Details
 export const useCurrentUserDetails = () => {
   const [userDetails, setUserDetails] = useState(null);
-  const user = useCurrentUser();
+  const { user, _ } = useCurrentUser();
 
   useEffect(() => {
     if (!user) {
